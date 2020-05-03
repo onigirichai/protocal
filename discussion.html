@@ -1,0 +1,241 @@
+<!--
+仮のmdl_cqchat_social_presence_pointのテーブルにコラムであるpointを集計し、
+タイムスタンプで期間を選択し、
+条件に当てはまる情報を
+D3ライブラリで可視化する
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>参加度</title>
+
+    <script src="js/http_d3js.org_d3.v4.js"></script>
+    <script src="js/jquery_2.1.1_jquery.js"></script>
+    <script src="js/bootstrap_3.3.6_js_bootstrap.js"></script>
+    <link href="css/bootstrap_3.3.6_css_bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="jquery-ui.css" >
+</head>
+<body onload="load_page()">
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1> バグジョ・システム</h1>
+        </div>
+    </div>
+    <!--    ナビゲーション・バー（ログイン、授業前、授業中）-->
+    <ul style="margin-bottom: 50px" class="nav nav-tabs">
+        <li role="presentation">
+            <a href="index.html">ログイン</a>
+        </li>
+        <li role="presentation" class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前<span class="caret"></span></a>
+
+            <ul class="dropdown-menu">
+                <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="heatmap.html">ヒートマップ</a></li>
+            </ul>
+        </li>
+        <li role="presentation" class="active">
+            <a href="#">授業中</a>
+        </li>
+
+        <li id="st-status" role="presentation" style="margin-left: 150px; margin-top: 10px">
+        </li>
+
+        <li id="logout" role="presentation" style="margin-left: 20px">
+            <button type="button" class="btn btn-danger" onclick="logout()">ログアウト</button>
+        </li>
+    </ul>
+
+</div>
+
+<h3 style="margin-left: 30px; margin-top: 10px">授業期間を選択してください</h3>
+<form style="margin-left: 30px">
+    <label for="datepicker_begin">始まり</label>
+    <input type="text" id="datepicker_begin" autocomplete="off">
+    <label for="datepicker_end">終わり</label>
+    <input type="text" id="datepicker_end" autocomplete="off">
+    <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
+</form>
+
+<div id="group">
+    <svg id = "sunburst" style="width: 400px; height: 400px; margin-left: 20px; margin-top: 20px"></svg>
+</div>
+</body>
+
+<script src="js/jquery-ui.js"></script>
+<script type="text/javascript">
+    //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
+    function load_page() {
+        var st = localStorage.getItem("student");
+        var begin = localStorage.getItem("datepicker_begin");
+        var end = localStorage.getItem("datepicker_end");
+        if(st ==null){
+            $('#logout').hide();
+            $("#st-status").html("ゲスト");
+        }else {
+            $('#logout').show();
+            $("#st-status").html(st);
+
+            $.ajax({
+                method:'POST',
+                url:'discussion_json.php',
+                data:{
+                    student: st,
+                    begin: begin,
+                    end: end
+                },
+                dataType:'text',
+
+                //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+                success: function (StuStatus) {
+                    if(StuStatus==="success"){
+                        //ログイン検証、可視化を実行
+                        draw();
+
+                    }else if (StuStatus==="false"){
+                        alert("未登録");
+                        $("#password").val('')
+                    }
+                }
+            })
+        }
+
+    }
+
+    function logout() {
+        localStorage.removeItem("student");
+        localStorage.removeItem("datepicker_begin");
+        localStorage.removeItem("datepicker_end");
+        load_page();
+    }
+
+    function select_time(){
+        //カレンダーの日付を選択し、ローカルストレージ
+        var begin = $("#datepicker_begin").val();
+        var end = $("#datepicker_end").val();
+        localStorage.setItem("datepicker_begin",begin);
+        localStorage.setItem("datepicker_end",end);
+        load_page();
+        location.reload();
+    }
+
+    $( "#datepicker_begin" ).datepicker();
+    $( "#datepicker_end" ).datepicker();
+
+    $("#datepicker_begin").attr("placeholder",localStorage.getItem("datepicker_begin"));
+    $("#datepicker_end").attr("placeholder",localStorage.getItem("datepicker_end"));
+
+    function draw(){
+        var st = localStorage.getItem("student");
+
+        var Width = $('#sunburst').width(),
+            Height = $('#sunburst').height(),
+            Radius = Math.min(Width, Height) / 2,
+            Color = d3.scaleOrdinal(d3.schemeCategory20b);
+
+
+        var g = d3.select('svg')
+            .append('g')
+            .attr('transform', 'translate('+ Width / 2 + ',' + Height / 2 + ')');
+
+        var Layout = d3.partition()
+            .size([2 * Math.PI, Radius]);
+
+        var Arc = d3.arc()
+            .startAngle(function (d) {return d.x0})
+            .endAngle(function(d){return d.x1})
+            .innerRadius(function(d){return d.y0})
+            .outerRadius(function(d){return d.y1});
+
+        //ブックエンドで集計済みのJson形式のファイルを読み込み
+        d3.json('data/'+st+'_discussion.json', function (error, Data) {
+            if (error) throw error;
+            drawSunburst(Data);
+        });
+
+        function drawSunburst(data){
+
+            var Root = d3.hierarchy(data)
+                .sum(function (d) {
+                    return d.size
+                });
+
+            var Nodes = Root.descendants();
+
+            Layout(Root);
+
+            var Slices = g.selectAll('g')
+                .data(Nodes)
+                .enter()
+                .append('g');
+
+            var tooltip = d3.select("#group")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("width", "100px")
+                .style("background-color","white");
+
+            var mouseover = function(d) {
+                tooltip.style("opacity", 1)
+            };
+            var mousemove = function(d) {
+                tooltip
+                    .html(d.data.id+ ":" + d.value)
+                    .style("left", (d3.mouse(this)[0]) +160+ "px")
+                    .style("top", (d3.mouse(this)[1]) +400 +"px")
+
+            };
+            var mouseleave = function(d) {
+                tooltip.style("opacity", 0)
+            };
+
+            Slices.append('path')
+                .attr('display', function (d) {
+                    return d.depth? null: 'none';
+                })
+                .attr('d', Arc)
+                .style('stroke', '#fff')
+                .style('fill',function (d) {
+                    return Color((d.children? d : d.parent).data.id)
+                })
+                .on('mouseover', mouseover)
+                .on('mousemove', mousemove)
+                .on('mouseleave', mouseleave);
+
+            Slices.append('text')
+                .attr('transform', function(d) {
+                    if(d.parent){return 'translate(' + Arc.centroid(d) + ')rotate(' + computeTextRotation(d) + ')';}
+                    else{return 'translate('+ 0+ ',' + 0 + ')'}
+                })
+                .attr('dx', '-20')
+                .attr('dy', '.5em')
+                .text(function(d) { return d.data.id });
+
+        }
+
+        function computeTextRotation(d) {
+
+            var angle = (d.x0 + d.x1) / Math.PI * 90;
+
+            // Avoid upside-down labels; labels as rims
+            return (angle < 140) ? angle - 90 : angle + 90;
+            //return (angle < 180) ? angle - 90 : angle + 90;  // labels as spokes
+        }
+
+
+    }
+
+
+</script>
