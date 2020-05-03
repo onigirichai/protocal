@@ -1,7 +1,7 @@
 <?php
 //Logincheck.phpと同じローカルの仮ユーザーログイン検証、
 //BookRollのデータベースにアクセスし、operationを集計し、
-//ユーザーごとにJson形式（data/ユーザーID_behavior.json）に保存
+//ユーザーごとにJson形式（data/ユーザーID_behavior.json）に保存a
 
 date_default_timezone_set('Asia/tokyo');
 
