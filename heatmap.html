@@ -1,0 +1,287 @@
+<!--
+BookRollのテーブルにコラムであるoperation_dateで変化した時間を集計し、
+タイムスタンプで期間を選択し、
+条件に当てはまる情報を
+D3ライブラリで可視化する
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>閲覧時間</title>
+
+    <script src="js/http_d3js.org_d3.v4.js"></script>
+    <script src="js/jquery_2.1.1_jquery.js"></script>
+    <script src="js/bootstrap_3.3.6_js_bootstrap.js"></script>
+    <link href="css/bootstrap_3.3.6_css_bootstrap.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="jquery-ui.css" >
+</head>
+<body onload="load_page()">
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1> バグジョ・システム</h1>
+        </div>
+    </div>
+    <!--    ナビゲーション・バー（ログイン、授業前、授業中）-->
+    <ul style="margin-bottom: 50px" class="nav nav-tabs">
+        <li role="presentation">
+            <a href="index.html">ログイン</a>
+        </li>
+        <li role="presentation" class="dropdown active">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前<span class="caret"></span></a>
+
+            <ul class="dropdown-menu">
+                <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="heatmap.html">ヒートマップ</a></li>
+            </ul>
+        </li>
+        <li role="presentation">
+            <a href="discussion.html">授業中</a>
+        </li>
+
+        <li id="st-status" role="presentation" style="margin-left: 150px; margin-top: 10px">
+        </li>
+
+        <li id="logout" role="presentation" style="margin-left: 20px">
+            <button type="button" class="btn btn-danger" onclick="logout()">ログアウト</button>
+        </li>
+    </ul>
+
+</div>
+
+<h3 style="margin-left: 30px; margin-top: 10px">授業期間を選択してください</h3>
+<form style="margin-left: 30px">
+    <label for="datepicker_begin">始まり</label>
+    <input type="text" id="datepicker_begin" autocomplete="off">
+    <label for="datepicker_end">終わり</label>
+    <input type="text" id="datepicker_end" autocomplete="off">
+    <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
+</form>
+<div id="heatmap" style="margin-left: 30px"></div>
+
+</body>
+
+<script src="js/jquery-ui.js"></script>
+<script type="text/javascript">
+    //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
+    function load_page() {
+        var st = localStorage.getItem("student");
+        var begin = localStorage.getItem("datepicker_begin");
+        var end = localStorage.getItem("datepicker_end");
+        if(st ==null){
+            $('#logout').hide();
+            $("#st-status").html("ゲスト");
+        }else {
+            $('#logout').show();
+            $("#st-status").html(st);
+
+            $.ajax({
+                method:'POST',
+                url:'heatmap_json.php',
+                data:{
+                    student: st,
+                    begin: begin,
+                    end: end
+                },
+                dataType:'text',
+                success: function (StuStatus) {
+                    if(StuStatus==="success"){
+                        //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+                        //ログイン検証、データを読み込み
+                        load_data();
+
+                    }else if (StuStatus==="false"){
+                        alert("未登録");
+                        $("#password").val('')
+                    }
+                }
+            })
+        }
+
+    }
+    
+
+    function logout() {
+        localStorage.removeItem("student");
+        localStorage.removeItem("datepicker_begin");
+        localStorage.removeItem("datepicker_end");
+        load_page();
+    }
+
+    function select_time(){
+        //カレンダーの日付を選択し、ローカルストレージ
+        var begin = $("#datepicker_begin").val();
+        var end = $("#datepicker_end").val();
+        localStorage.setItem("datepicker_begin",begin);
+        localStorage.setItem("datepicker_end",end);
+        load_page();
+        location.reload();
+    }
+
+    $( "#datepicker_begin" ).datepicker();
+    $( "#datepicker_end" ).datepicker();
+
+    $("#datepicker_begin").attr("placeholder",localStorage.getItem("datepicker_begin"));
+    $("#datepicker_end").attr("placeholder",localStorage.getItem("datepicker_end"));
+
+    function load_data() {
+        var st = localStorage.getItem("student");
+        //ブックエンドで集計済みのJson形式のファイルを読み込み
+        d3.json('data/'+st+'_heatmap.json', function (error, Data) {
+            if (error) throw error;
+            console.log(Data);
+            draw_heatmap(Data);
+
+        });
+    }
+
+    //ヒートマップでの可視化
+    function draw_heatmap(Data){
+
+        // set the dimensions and margins of the graph
+        var margin = {top: 30, right: 30, bottom: 30, left: 30},
+            width = 450 - margin.left - margin.right,
+            height = 450 - margin.top - margin.bottom;
+
+        // append the svg object
+        var svg = d3.select("#heatmap")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+        // Labels of row and columns
+        var student_id = [];
+        var pages = [];
+        var page_length = [];
+
+        for (var i=0; i<Data.children.length; i++){
+            student_id.push(Data.children[i].id);
+            var page_tmp = Data.children[i].children;
+            page_length.push(Object.keys(page_tmp).length);
+        }
+
+        var max_len = Math.max(...page_length);
+
+        for (var j=0; j<max_len; j++){
+            pages.push(j+1);
+        }
+
+        // Build X scales and axis:
+        var x = d3.scaleBand()
+            .range([ 0, width ])
+            .domain(student_id)
+            .padding(0.01);
+        svg.append("g")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(x))
+            .append("text")
+            .text("学生ID")
+            .attr("stroke","#000")
+            .attr("x",width)
+            .attr("y",20);
+
+        // Build y scales and axis:
+        var y = d3.scaleBand()
+            .range([ height, 0 ])
+            .domain(pages)
+            .padding(0.01);
+        svg.append("g")
+            .call(d3.axisLeft(y))
+            .append("text")
+            .text("ページ番号")
+            .attr("stroke","#000")
+            .attr("x",20)
+            .attr("y",-10);
+
+
+        // Build color scale
+        var myColor = d3.scaleLinear()
+            .range(["white", "#ff0000"])
+            .domain([1,100]);
+
+        //Read the data
+        // d3.json("data/133_behavior.json", function(data) {
+
+        // var student = [];
+        // var page = [];
+        // var value = [];
+        var time_array = [];
+        for (var row = 0; row < student_id.length; row++){
+            for (var col = 0; col < pages.length; col++){
+                time_array[row*pages.length+col] = {};
+                var values_obj = Data.children[row].children;
+
+                // student.push(Data.children[row].id);
+                // page.push(col+1);
+                // value.push(Object.values(values_obj)[col].size);
+
+                time_array[row*pages.length+col]["id"] = Data.children[row].id;
+                time_array[row*pages.length+col]["page"] = col+1;
+                time_array[row*pages.length+col]["time"] = Object.values(values_obj)[col].size;
+            }
+        }
+
+
+        // ツールキットを作成
+        var tooltip = d3.select("#heatmap")
+            .append("div")
+            .style("opacity", 0)
+            .attr("class", "tooltip")
+            .style("background-color", "white")
+            .style("border", "solid")
+            .style("border-width", "2px")
+            .style("border-radius", "5px")
+            .style("padding", "5px")
+            .style("width", "800px");
+
+        // Three function that change the tooltip when user hover / move / leave a cell
+        var mouseover = function (d) {
+            tooltip.style("opacity", 1)
+        };
+        var mousemove = function (d) {
+            tooltip
+                .html(d.page + "ページ目を読む時間は<br>" + d.time + "s<br><strong>")
+                .style("left", (d3.mouse(this)[0] + 70) + "px")
+                .style("top", (d3.mouse(this)[1]) + "px")
+        };
+        var mouseleave = function (d) {
+            tooltip.style("opacity", 0)
+        };
+
+        // add the squares
+        svg.selectAll()
+            .data(time_array, function (d) {
+                return d.id + ':' + d.page;
+            })
+            .enter()
+            .append("rect")
+            .attr("x", function (d) {
+                return x(d.id)
+            })
+            .attr("y", function (d) {
+                return y(d.page)
+            })
+            .attr("width", x.bandwidth())
+            .attr("height", y.bandwidth())
+            .style("fill", function (d) {
+                return myColor(d.time)
+            })
+            .on("mouseover", mouseover)
+            .on("mousemove", mousemove)
+            .on("mouseleave", mouseleave)
+    }
+
+
+
+</script>
+
+
+
