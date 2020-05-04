@@ -17,8 +17,13 @@ class JsonObject{
 
 }
 
+session_start();
+
 //POSTでユーザーID,始まり時間と終わり時間を獲得
-$student = $_POST['student'];
+$student = $_SESSION["logined_cqchat_userid"];
+$group_member = $_SESSION["group_member_id"];
+$grou_id = $_SESSION["groupid"];
+
 if($_POST['begin']){
     $begin = $_POST['begin'];
     $begin = strtotime($begin);
@@ -32,35 +37,11 @@ if($_POST['end']){
     $end = time();
 }
 
-
-//TODO：テスト用のローカルのデータベース、修正可
-$dsn = 'mysql:dbname=bagujo;host=127.0.0.1;port=3306';
-$dbuser = 'onigiri';
-$dbpassword = 'angelfantuan';
-
-try{
-    $dbh = new PDO($dsn, $dbuser, $dbpassword);
-}catch (PDOException $e){
-    echo "接続失敗: " . $e->getMessage() . "\n";
-}
-
-$users_l = $dbh->query("select * from users");
-$loginstatus = "false";
 $student_l = array();
-foreach ($users_l as $row){
-    //TODO：グループIDとユーザーIDの検証、テスト用の'1'を修正
-    if ($row['GroupID'] == '1'){
-        array_push($student_l, $row['StudentID']);
-    }                            //change $_POST
 
+$student_l = explode(',', $group_member);
 
-    if ($row['StudentID'] == $student){
-        $loginstatus = "success";
-    }
-}
-
-//bookq_behavior.htmlにログイン状態を送信
-echo $loginstatus;
+echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
 $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307';
@@ -74,8 +55,8 @@ try {
 }finally{
 
     $jsonString = new JsonObject();
-    //TODO：テスト用の'1'を修正
-    $jsonString->id = 'グループ 1';
+
+    $jsonString->id = 'グループ '. $grou_id;    //change $_POST
     $jsonString->children = array();
 
     for ($i = 0; $i < count($student_l); $i++){

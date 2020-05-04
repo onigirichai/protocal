@@ -73,49 +73,38 @@ D3ライブラリで可視化する
 <script type="text/javascript">
     function load_page() {
         //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
         var begin = localStorage.getItem("datepicker_begin");
         var end = localStorage.getItem("datepicker_end");
-        if(st ==null){
-            $('#logout').hide();
-            $("#st-status").html("ゲスト");
-        }else {
-            $('#logout').show();
-            $("#st-status").html(st);
 
-            $.ajax({
-                method:'POST',
-                url:'behavior_json.php',
-                data:{
-                    student: st,
-                    begin: begin,
-                    end: end
-                },
-                dataType:'text',
-                //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
-                success: function (StuStatus) {
-                    if(StuStatus==="success"){
-                        //ログイン検証、可視化を実行
-                        draw();
+        $("#st-status").html(st);
 
-                    }else if (StuStatus==="false"){
-                        alert("未登録");
-                        $("#password").val('')
-                    }
+        $.ajax({
+            method:'POST',
+            url:'behavior_json.php',
+            data:{
+                begin: begin,
+                end: end
+            },
+            dataType:'text',
+            //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+            success: function (StuStatus) {
+                if(StuStatus){
+
+                    draw();
+
+                }else if (StuStatus==="false"){
+                    alert("未登録");
+                    $("#password").val('')
                 }
-            })
-        }
+            }
+        })
+
 
     }
 
 
 
-    function logout() {
-        localStorage.removeItem("student");
-        localStorage.removeItem("datepicker_begin");
-        localStorage.removeItem("datepicker_end");
-        load_page();
-    }
 
     function select_time(){
         //カレンダーの日付を選択し、ローカルストレージ
@@ -136,7 +125,7 @@ D3ライブラリで可視化する
 
     //D3で可視化する関数
     function draw(){
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
 
         var Width = $('#sunburst').width(),
             Height = $('#sunburst').height(),

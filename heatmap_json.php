@@ -54,7 +54,7 @@ try {
 
     $jsonString = new JsonObject();
     //TODO：テスト用の'1'を修正
-    $jsonString->id = 'グループ '+ $_SESSION["groupid"];    //change $_POST
+    $jsonString->id = 'グループ '. $_SESSION["groupid"];    //change $_POST
     $jsonString->children = array();
 
     for ($i = 0; $i < count($student_l); $i++) {
