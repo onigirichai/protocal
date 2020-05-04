@@ -1,0 +1,44 @@
+<!--
+仮のCQCHATからのデータを受け取る
+-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>バグジョ</title>
+
+    <script src="js/jquery_2.1.1_jquery.js"></script>
+    <script src="js/bootstrap_3.3.6_js_bootstrap.js"></script>
+    <link href="css/bootstrap_3.3.6_css_bootstrap.css" rel="stylesheet"/>
+
+</head>
+<body>
+<form method="post" action="index.php">
+    <button type="button" class="btn btn-light" onclick="test()">ログイン</button>
+</form>
+</body>
+</html>
+
+<script type="text/javascript">
+    function test() {
+        $.ajax({
+            method:'POST',
+            url:'index.php',
+            data:{
+                logined_cqchat_userid: "133",
+                clicked_cqchat_userid: "1527",
+                cqchat_id:"35",
+                cqchat_courseid:"3",
+                groupid:"34",
+                group_member_id:"1504,1527,1525"
+
+            },
+            dataType:'text',
+            //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+            success: function (loginStatus) {
+                window.location.href="index.php"
+            }
+        })
+    }
+</script>
