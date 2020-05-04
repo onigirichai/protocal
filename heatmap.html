@@ -44,12 +44,13 @@ D3ライブラリで可視化する
             <a href="discussion.html">授業中</a>
         </li>
 
-        <li id="st-status" role="presentation" style="margin-left: 150px; margin-top: 10px">
+        <li role="presentation" style="margin-left: 150px; margin-top: 10px">
+            ログインID
         </li>
+        <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
 
-        <li id="logout" role="presentation" style="margin-left: 20px">
-            <button type="button" class="btn btn-danger" onclick="logout()">ログアウト</button>
-        </li>
+
+
     </ul>
 
 </div>
@@ -70,27 +71,22 @@ D3ライブラリで可視化する
 <script type="text/javascript">
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
         var begin = localStorage.getItem("datepicker_begin");
         var end = localStorage.getItem("datepicker_end");
-        if(st ==null){
-            $('#logout').hide();
-            $("#st-status").html("ゲスト");
-        }else {
-            $('#logout').show();
+
             $("#st-status").html(st);
 
             $.ajax({
                 method:'POST',
                 url:'heatmap_json.php',
                 data:{
-                    student: st,
                     begin: begin,
                     end: end
                 },
                 dataType:'text',
                 success: function (StuStatus) {
-                    if(StuStatus==="success"){
+                    if(StuStatus){
                         //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
                         //ログイン検証、データを読み込み
                         load_data();
@@ -101,17 +97,12 @@ D3ライブラリで可視化する
                     }
                 }
             })
-        }
+
 
     }
     
 
-    function logout() {
-        localStorage.removeItem("student");
-        localStorage.removeItem("datepicker_begin");
-        localStorage.removeItem("datepicker_end");
-        load_page();
-    }
+
 
     function select_time(){
         //カレンダーの日付を選択し、ローカルストレージ
@@ -130,7 +121,7 @@ D3ライブラリで可視化する
     $("#datepicker_end").attr("placeholder",localStorage.getItem("datepicker_end"));
 
     function load_data() {
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
         //ブックエンドで集計済みのJson形式のファイルを読み込み
         d3.json('data/'+st+'_heatmap.json', function (error, Data) {
             if (error) throw error;
