@@ -65,6 +65,7 @@
         $_SESSION["cqchat_courseid"] = $cqchat_courseid;
         $_SESSION["groupid"] = $groupid;
         $_SESSION["group_member_id"] = $group_member_id;
+        $_SESSION["all"] = $_POST;
 
     }
 

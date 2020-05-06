@@ -45,12 +45,10 @@ D3ライブラリで可視化する
             <a href="#">授業中</a>
         </li>
 
-        <li id="st-status" role="presentation" style="margin-left: 150px; margin-top: 10px">
+        <li role="presentation" style="margin-left: 150px; margin-top: 10px">
+            ログインID
         </li>
-
-        <li id="logout" role="presentation" style="margin-left: 20px">
-            <button type="button" class="btn btn-danger" onclick="logout()">ログアウト</button>
-        </li>
+        <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
 
 </div>
@@ -73,47 +71,34 @@ D3ライブラリで可視化する
 <script type="text/javascript">
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
         var begin = localStorage.getItem("datepicker_begin");
         var end = localStorage.getItem("datepicker_end");
-        if(st ==null){
-            $('#logout').hide();
-            $("#st-status").html("ゲスト");
-        }else {
-            $('#logout').show();
-            $("#st-status").html(st);
+        $("#st-status").html(st);
 
-            $.ajax({
-                method:'POST',
-                url:'discussion_json.php',
-                data:{
-                    student: st,
-                    begin: begin,
-                    end: end
-                },
-                dataType:'text',
+        $.ajax({
+            method:'POST',
+            url:'discussion_json.php',
+            data:{
+                begin: begin,
+                end: end
+            },
+            dataType:'text',
 
-                //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
-                success: function (StuStatus) {
-                    if(StuStatus==="success"){
-                        //ログイン検証、可視化を実行
-                        draw();
+            //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+            success: function (StuStatus) {
+                if(StuStatus){
+                    //ログイン検証、可視化を実行
+                    draw();
 
-                    }else if (StuStatus==="false"){
-                        alert("未登録");
-                        $("#password").val('')
-                    }
+                }else if (StuStatus==="false"){
+                    alert("未登録");
+                    $("#password").val('')
                 }
-            })
-        }
+            }
+        })
 
-    }
 
-    function logout() {
-        localStorage.removeItem("student");
-        localStorage.removeItem("datepicker_begin");
-        localStorage.removeItem("datepicker_end");
-        load_page();
     }
 
     function select_time(){
@@ -133,7 +118,7 @@ D3ライブラリで可視化する
     $("#datepicker_end").attr("placeholder",localStorage.getItem("datepicker_end"));
 
     function draw(){
-        var st = localStorage.getItem("student");
+        var st = localStorage.getItem("logined_cqchat_userid");
 
         var Width = $('#sunburst').width(),
             Height = $('#sunburst').height(),
