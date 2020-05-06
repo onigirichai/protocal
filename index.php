@@ -11,7 +11,7 @@
 
 </head>
 
-<body>
+<body onload="load_page()">
 
 <div class="container-fluid">
     <div class="row">
@@ -37,12 +37,10 @@
             <a class="nav-link" href="discussion.html">授業中</a>
         </li>
 
-        <li id="st-status" style="margin-left: 150px; margin-top: 10px">
+        <li role="presentation" style="margin-left: 150px; margin-top: 10px">
+            ログインID
         </li>
-
-        <li id="logout" style="margin-left: 20px">
-            <button type="button" class="btn btn-danger" onclick="logout()">ログアウト</button>
-        </li>
+        <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
 
 
@@ -73,12 +71,20 @@
 
 </body>
 
-<script>
+<script type="text/javascript">
+    function load_page() {
+        var st = localStorage.getItem("logined_cqchat_userid");
+        var begin = localStorage.getItem("datepicker_begin");
+        var end = localStorage.getItem("datepicker_end");
+
+        $("#st-status").html(st);
+    }
     localStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>)
     localStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>)
     localStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>)
     localStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>)
     localStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>)
+
 </script>
 
 <!--    echo "<script>localStorage.setItem(\"logined_cqchat_userid\",$user_id)</script>";-->

@@ -29,7 +29,7 @@ D3ライブラリで可視化する
     <!--    ナビゲーション・バー（ログイン、授業前、授業中）-->
     <ul style="margin-bottom: 50px" class="nav nav-tabs">
         <li role="presentation">
-            <a href="index.html">ログイン</a>
+            <a href="index.php">ログイン</a>
         </li>
         <li role="presentation" class="dropdown active">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前<span class="caret"></span></a>
@@ -89,7 +89,11 @@ D3ライブラリで可視化する
                     if(StuStatus){
                         //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
                         //ログイン検証、データを読み込み
-                        load_data();
+                        if (begin && end){
+                            load_data();
+                        }else{
+                            alert("期間を選択してください")
+                        }
 
                     }else if (StuStatus==="false"){
                         alert("未登録");
