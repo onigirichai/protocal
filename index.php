@@ -1,3 +1,8 @@
+<!--
+バグジョシステムのホームページ
+各メンバーのプロフを表示する
+POSTデータに対応するデータを受け取る機能
+-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -48,7 +53,7 @@
 <?php
 
     session_start();
-    //TODO セッションとして保存、テスト用
+    //POSTデータをセッションとして保存
     if(!isset($_SESSION["logined_cqchat_userid"])){
         $user_id = $_POST["logined_cqchat_userid"];
         $clicked_user_id = $_POST["clicked_cqchat_userid"];
@@ -72,6 +77,7 @@
 </body>
 
 <script type="text/javascript">
+//    保存
     function load_page() {
         var st = localStorage.getItem("logined_cqchat_userid");
         var begin = localStorage.getItem("datepicker_begin");
@@ -86,7 +92,4 @@
     localStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>)
 
 </script>
-
-<!--    echo "<script>localStorage.setItem(\"logined_cqchat_userid\",$user_id)</script>";-->
-<!---->
 
