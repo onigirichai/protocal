@@ -46,7 +46,7 @@ foreach ($student_l as $st){
 }
 
 $userid_timestamp = array_keys($tmp_all);
-for($i = 6; $i<count($tmp_all);$i++){
+for($i = 7; $i<count($tmp_all);$i++){
     $tmp_ts_id = explode('_',$userid_timestamp[$i]);
     $tmp_timestamp = $tmp_ts_id[count($tmp_ts_id)-1];
     $tmp_member_id = $tmp_ts_id[count($tmp_ts_id)-2];
