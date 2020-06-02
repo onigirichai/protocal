@@ -79,17 +79,17 @@ POSTデータに対応するデータを受け取る機能
 <script type="text/javascript">
 //    保存
     function load_page() {
-        var st = localStorage.getItem("logined_cqchat_userid");
-        var begin = localStorage.getItem("datepicker_begin");
-        var end = localStorage.getItem("datepicker_end");
+        var st = sessionStorage.getItem("logined_cqchat_userid");
+        var begin = sessionStorage.getItem("datepicker_begin");
+        var end = sessionStorage.getItem("datepicker_end");
 
         $("#st-status").html(st);
     }
-    localStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>)
-    localStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>)
-    localStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>)
-    localStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>)
-    localStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>)
+    sessionStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>);
+    sessionStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>);
+    sessionStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>);
+    sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
+    sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);
 
 </script>
 

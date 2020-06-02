@@ -71,9 +71,9 @@ D3ライブラリで可視化するaaaaaaa
 <script type="text/javascript">
     function load_page() {
         //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
-        var st = localStorage.getItem("logined_cqchat_userid");
-        var begin = localStorage.getItem("datepicker_begin");
-        var end = localStorage.getItem("datepicker_end");
+        var st = sessionStorage.getItem("logined_cqchat_userid");
+        var begin = sessionStorage.getItem("datepicker_begin");
+        var end = sessionStorage.getItem("datepicker_end");
 
         $("#st-status").html(st);
 
@@ -111,8 +111,8 @@ D3ライブラリで可視化するaaaaaaa
         //カレンダーの日付を選択し、ローカルストレージ
         var begin = $("#datepicker_begin").val();
         var end = $("#datepicker_end").val();
-        localStorage.setItem("datepicker_begin",begin);
-        localStorage.setItem("datepicker_end",end);
+        sessionStorage.setItem("datepicker_begin",begin);
+        sessionStorage.setItem("datepicker_end",end);
         load_page();
         location.reload();
     }
@@ -121,12 +121,12 @@ D3ライブラリで可視化するaaaaaaa
     $( "#datepicker_begin" ).datepicker();
     $( "#datepicker_end" ).datepicker();
 
-    $("#datepicker_begin").attr("placeholder",localStorage.getItem("datepicker_begin"));
-    $("#datepicker_end").attr("placeholder",localStorage.getItem("datepicker_end"));
+    $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("datepicker_begin"));
+    $("#datepicker_end").attr("placeholder",sessionStorage.getItem("datepicker_end"));
 
     //D3で可視化する関数
     function draw(){
-        var st = localStorage.getItem("logined_cqchat_userid");
+        var st = sessionStorage.getItem("logined_cqchat_userid");
 
         var Width = $('#sunburst').width(),
             Height = $('#sunburst').height(),
