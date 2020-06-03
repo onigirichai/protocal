@@ -44,7 +44,8 @@ $student_l = explode(',', $group_member);
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307';
+$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306';
 $user_bookr = 'student';
 $password_bookr = 'ledsbr';
 
