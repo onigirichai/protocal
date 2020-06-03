@@ -71,7 +71,7 @@ D3ライブラリで可視化する
 <script type="text/javascript">
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
-        var st = sessionStorage.getItem("logined_cqchat_userid");
+        var st = sessionStorage.getItem("logined_lms_userid");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
         $("#st-status").html(st);
@@ -122,7 +122,7 @@ D3ライブラリで可視化する
     $("#datepicker_end").attr("placeholder",sessionStorage.getItem("datepicker_end"));
 
     function draw(){
-        var st = sessionStorage.getItem("logined_cqchat_userid");
+        var st = sessionStorage.getItem("logined_lms_userid");
 
         var Width = $('#sunburst').width(),
             Height = $('#sunburst').height(),

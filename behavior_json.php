@@ -20,8 +20,8 @@ class JsonObject{
 session_start();
 
 //POSTでユーザーID,始まり時間と終わり時間を獲得
-$student = $_SESSION["logined_cqchat_userid"];
-$group_member = $_SESSION["group_member_id"];
+$student = $_SESSION["logined_lms_userid"];
+$group_member = $_SESSION["group_member_lmsuserid"];
 $grou_id = $_SESSION["groupid"];
 
 if($_POST['begin']){

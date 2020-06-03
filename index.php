@@ -54,20 +54,27 @@ POSTデータに対応するデータを受け取る機能
 
     session_start();
     //POSTデータをセッションとして保存
-    if(!isset($_SESSION["logined_cqchat_userid"])){
+
+    if(isset($_POST["logined_cqchat_userid"])){
         $user_id = $_POST["logined_cqchat_userid"];
         $clicked_user_id = $_POST["clicked_cqchat_userid"];
+        $user_lmsid = $_POST["logined_lms_userid"];
+        $clicked_user_lmsid = $_POST["clicked_lms_userid"];
         $cqchat_id = $_POST["cqchat_id"];
         $cqchat_courseid = $_POST["cqchat_courseid"];
         $groupid = $_POST["groupid"];
         $group_member_id = $_POST["group_member_id"];
+        $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
 
         $_SESSION["logined_cqchat_userid"] = $user_id;
         $_SESSION["clicked_cqchat_userid"] = $clicked_user_id;
+        $_SESSION["logined_lms_userid"] = $user_lmsid;
+        $_SESSION["clicked_lms_userid"] = $clicked_user_lmsid;
         $_SESSION["cqchat_id"] = $cqchat_id;
         $_SESSION["cqchat_courseid"] = $cqchat_courseid;
         $_SESSION["groupid"] = $groupid;
         $_SESSION["group_member_id"] = $group_member_id;
+        $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
         $_SESSION["all"] = $_POST;
 
     }
@@ -79,7 +86,7 @@ POSTデータに対応するデータを受け取る機能
 <script type="text/javascript">
 //    保存
     function load_page() {
-        var st = sessionStorage.getItem("logined_cqchat_userid");
+        var st = sessionStorage.getItem("logined_lms_userid");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
@@ -87,6 +94,8 @@ POSTデータに対応するデータを受け取る機能
     }
     sessionStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>);
     sessionStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>);
+    sessionStorage.setItem("logined_lms_userid",<?php echo $_SESSION["logined_lms_userid"]; ?>);
+    sessionStorage.setItem("clicked_lms_userid",<?php echo $_SESSION["clicked_lms_userid"]; ?>);
     sessionStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>);
     sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
     sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);

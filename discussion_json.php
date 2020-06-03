@@ -12,8 +12,8 @@ class JsonObject{
 }
 session_start();
 
-$student = $_SESSION["logined_cqchat_userid"];
-$group_member = $_SESSION["group_member_id"];
+$student = $_SESSION["logined_lms_userid"];
+$group_member = $_SESSION["group_member_lmsuserid"];
 $tmp_all = $_SESSION["all"];
 
 if($_POST['begin']){
@@ -46,7 +46,10 @@ foreach ($student_l as $st){
 }
 
 $userid_timestamp = array_keys($tmp_all);
-for($i = 7; $i<count($tmp_all);$i++){
+
+$tmp = array_keys($userid_timestamp,"common_groupingid");
+
+for($i = $tmp[0] + 1; $i<count($tmp_all);$i++){
     $tmp_ts_id = explode('_',$userid_timestamp[$i]);
     $tmp_timestamp = $tmp_ts_id[count($tmp_ts_id)-1];
     $tmp_member_id = $tmp_ts_id[count($tmp_ts_id)-2];
