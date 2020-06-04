@@ -88,6 +88,7 @@ D3ライブラリで可視化する
             //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
             success: function (StuStatus) {
                 if(StuStatus){
+                    console.log(StuStatus);
                     //ログイン検証、可視化を実行
                     if (begin && end){
                         draw();
@@ -100,6 +101,7 @@ D3ライブラリで可視化する
                     $("#password").val('')
                 }
             }
+
         })
 
 
