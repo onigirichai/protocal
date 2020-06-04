@@ -100,8 +100,12 @@ D3ライブラリで可視化する
                     alert("未登録");
                     $("#password").val('')
                 }
+            },
+            error : function (XMLHttpRequest, textStatus, errorThrown) {
+            console.log(XMLHttpRequest); // XMLHttpRequestオブジェクト
+            console.log(textStatus); // status は、リクエスト結果を表す文字列
+            console.log(errorThrown); // errorThrown は、例外オブジェクト
             }
-
         })
 
 
