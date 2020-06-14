@@ -56,9 +56,9 @@ for($i = $tmp[0] + 1; $i<count($tmp_all);$i++){
     array_push($dis_st[$tmp_member_id], $tmp_timestamp.','.$tmp_all[$userid_timestamp[$i]]);
 }
 
-$dis_l = array("thread", "reference", "quoting", "question", "appreciation", "agreement");
+$dis_l = array("thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice");
 
-$dis_jp = array("スレッド", "参照", "引用", "質問", "感謝", "同意");
+$dis_jp = array("スレッド", "参照", "引用", "質問", "感謝", "同意", "不同意", "提案");
 
 $jsonString = new JsonObject();
 $jsonString->id = 'グループ '.$_SESSION["groupid"];    //change $_POST
@@ -72,7 +72,9 @@ for ($i = 0; $i < count($student_l); $i++){
         "quoting" => 0,
         "question" => 0,
         "appreciation" => 0,
-        "agreement" => 0
+        "agreement" => 0,
+        "disagreement" => 0,
+        "advice" => 0
     );
 
     foreach($dis_st[$student_l[$i]] as $value){
@@ -104,7 +106,7 @@ for ($i = 0; $i < count($student_l); $i++){
 
 }
 
-//    echo urldecode( json_encode($jsonString));
+echo urldecode( json_encode($jsonString));
 file_put_contents('data/'.$student.'_discussion.json', json_encode($jsonString));
 
 
