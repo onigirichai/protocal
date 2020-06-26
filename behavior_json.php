@@ -23,7 +23,7 @@ session_start();
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
 $group_id = $_SESSION["groupid"];
-$result = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -45,7 +45,7 @@ $student_l = explode(',', $group_member);
 $student_name_l = array();
 
 foreach ($student_l as $value){
-    $student_name_l[$value] = $result[$value];
+    $student_name_l[$value] = $id_name[$value];
 }
 
 echo "success";
@@ -121,6 +121,8 @@ ss;
 
     file_put_contents('data/'.$student.'_behavior.json', json_encode($jsonString));
 
+    $dsn_bookr = null;
+    $result = null;
 
 //    SSHTunnel::stop();
     exit;

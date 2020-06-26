@@ -22,7 +22,7 @@ session_start();
 //POSTでユーザーID,始まり時間と終わり時間を獲得
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
-$result = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -44,7 +44,7 @@ $student_l = explode(',', $group_member);
 $student_name_l = array();
 
 foreach ($student_l as $value){
-    $student_name_l[$value] = $result[$value];
+    $student_name_l[$value] = $id_name[$value];
 }
 
 echo "success";
@@ -138,7 +138,39 @@ ss;
 
     file_put_contents('data/' . $student . '_heatmap.json', json_encode($jsonString));
 
+    // Collect pages from the material
+    $page_images = array();
+//    $page_markers = array();
+    $select_cour_page = <<<ss
+        SELECT page, version, viewer_url FROM bookroll.br_contents_file 
+        left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
+        where bookroll.br_contents.title like N'%課題協学第1回%'
+ss;
+    $result_page = $dsn_bookr->query($select_cour_page);
+    foreach($result_page as $line){
+        $page_no = $line['page'];
+        $version = $line['version'];
+        $viewer_url = $line['viewer_url'];
+    }
 
+    $bookroll_host = 'la.ait.kyushu-u.ac.jp/qu/bookroll';
+
+
+    for ($i = 1; $i <= $page_no; $i++) {
+        $tmp = array();
+        array_push($tmp, $i);
+        array_push($tmp, "https://{$bookroll_host}/contents/unzipped/{$viewer_url}_{$version}/OPS/images/out_{$i}.jpg");
+        array_push($page_images, $tmp);
+    }
+
+    $f = fopen("data/test.csv", "w");
+    foreach ($page_images as $line){
+        fputcsv($f, $line);
+    }
+    fclose($f);
+
+    $dsn_bookr = null;
+    $result = null;
 //    SSHTunnel::stop();
     exit;
 }

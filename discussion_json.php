@@ -14,7 +14,7 @@ session_start();
 
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
-$result = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;
 $tmp_all = $_SESSION["all"];
 
 if($_POST['begin']){
@@ -41,7 +41,7 @@ $student_l = explode(',', $group_member);
 $student_name_l = array();
 
 foreach ($student_l as $value){
-    $student_name_l[$value] = $result[$value];
+    $student_name_l[$value] = $id_name[$value];
 }
 
 echo "success";
@@ -116,6 +116,7 @@ for ($i = 0; $i < count($student_l); $i++){
 echo urldecode( json_encode($jsonString));
 file_put_contents('data/'.$student.'_discussion.json', json_encode($jsonString));
 
-
+$dsn_bookr = null;
+$result = null;
 //    SSHTunnel::stop();
 exit;
