@@ -87,12 +87,28 @@ POSTデータに対応するデータを受け取る機能
 
         if (($handle = fopen("data/lti_list.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
-                if ($data[0] != "id")
-                    $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
-                    $result[$data[1]] = $data[2];
+                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+                $result[$data[1]] = $data[2];
                 }
             }
             fclose($handle);
+
+        $course_begin = array();
+        $course_end = array();
+
+        if (($handle = fopen("data/course_time.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle))) {
+
+                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
+                $course_begin[$data[0]] = $data[1];
+
+                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+                $course_end[$data[0]] = $data[2];
+            }
+        }
+        fclose($handle);
+
+
 
         $group_member_l = explode(',', $group_member_lmsuserid);
 
@@ -126,6 +142,10 @@ POSTデータに対応するデータを受け取る機能
 
         $_SESSION["group_member_id_list"] = $group_member_str;
         $_SESSION["result"] = $result;
+
+        $_SESSION["course_begin"] = $course_begin[$cqchat_courseid];
+        $_SESSION["course_end"] = $course_end[$cqchat_courseid];
+
         $_SESSION["all"] = $_POST;
 
     }
@@ -159,6 +179,9 @@ POSTデータに対応するデータを受け取る機能
     sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
     sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);
     sessionStorage.setItem("name_st","<?php echo $_SESSION["logined_lms_username"]; ?>");
+
+    sessionStorage.setItem("course_begin","<?php echo $_SESSION["course_begin"]; ?>");
+    sessionStorage.setItem("course_end","<?php echo $_SESSION["course_end"]; ?>");
 
 
 

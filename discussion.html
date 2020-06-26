@@ -62,6 +62,15 @@ D3ライブラリで可視化する
     <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
 
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 id = "course_id" style="margin-left: 30px; margin-top: 10px"></h3>
+            <h3 id = "time_zone" style="margin-left: 30px; margin-top: 10px"></h3>
+        </div>
+    </div>
+</div>
+
 <div id="group">
     <svg id = "sunburst" style="width: 400px; height: 400px; margin-left: 20px; margin-top: 20px"></svg>
 </div>
@@ -72,9 +81,17 @@ D3ライブラリで可視化する
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
         var st = sessionStorage.getItem("name_st");
+        var course = sessionStorage.getItem("cqchat_courseid");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
+
         $("#st-status").html(st);
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        if(begin && end){
+            $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
+        }else {
+            $("#time_zone").html("<img src=\'images/time_icon.png\' alt= \'course_icon\'>" + ' '+ "授業期間を選択してください");
+        }
 
         $.ajax({
             method:'POST',
@@ -124,8 +141,8 @@ D3ライブラリで可視化する
     $( "#datepicker_begin" ).datepicker();
     $( "#datepicker_end" ).datepicker();
 
-    $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("datepicker_begin"));
-    $("#datepicker_end").attr("placeholder",sessionStorage.getItem("datepicker_end"));
+    $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("course_begin"));
+    $("#datepicker_end").attr("placeholder",sessionStorage.getItem("course_end"));
 
     function draw(){
         var st = sessionStorage.getItem("logined_lms_userid");
@@ -209,14 +226,19 @@ D3ライブラリで可視化する
                 .on('mousemove', mousemove)
                 .on('mouseleave', mouseleave);
 
-            Slices.append('text')
-                .attr('transform', function(d) {
-                    if(d.parent){return 'translate(' + Arc.centroid(d) + ')rotate(' + computeTextRotation(d) + ')';}
-                    else{return 'translate('+ 0+ ',' + 0 + ')'}
-                })
-                .attr('dx', '-20')
-                .attr('dy', '.5em')
-                .text(function(d) { return d.data.id });
+            if (Root.value){
+                Slices.append('text')
+                    .attr('transform', function(d) {
+                        if(d.parent){return 'translate(' + Arc.centroid(d) + ')rotate(' + computeTextRotation(d) + ')';}
+                        else{return 'translate('+ 0+ ',' + 0 + ')'}
+                    })
+                    .attr('dx', '-20')
+                    .attr('dy', '.5em')
+                    .text(function(d) { return d.data.id });
+            }else{
+                alert("データなし、頑張ってください");
+            }
+
 
         }
 
