@@ -22,6 +22,8 @@ session_start();
 //POSTでユーザーID,始まり時間と終わり時間を獲得
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
+$result = $_SESSION["result"] ;
+
 if($_POST['begin']){
     $begin = $_POST['begin'];
     $begin = strtotime($begin);
@@ -38,6 +40,12 @@ if($_POST['end']){
 $student_l = array();
 
 $student_l = explode(',', $group_member);
+
+$student_name_l = array();
+
+foreach ($student_l as $value){
+    $student_name_l[$value] = $result[$value];
+}
 
 echo "success";
 
@@ -114,7 +122,7 @@ ss;
         }
 
         $jsonString->children[$i]= new JsonObject();
-        $jsonString->children[$i]->id = $student_l[$i];
+        $jsonString->children[$i]->id = $student_name_l[$student_l[$i]];
         $jsonString->children[$i]->children = array();
 
         foreach ($read_time as $key => $value){

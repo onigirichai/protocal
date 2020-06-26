@@ -46,7 +46,7 @@ D3ライブラリで可視化する
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
-            ログインID
+            <img src='images/user_s_icon.png' alt= 'user_icon'>
         </li>
         <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
@@ -71,7 +71,7 @@ D3ライブラリで可視化する
 <script type="text/javascript">
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
-        var st = sessionStorage.getItem("logined_lms_userid");
+        var st = sessionStorage.getItem("name_st");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
         $("#st-status").html(st);
@@ -225,7 +225,7 @@ D3ライブラリで可視化する
             var angle = (d.x0 + d.x1) / Math.PI * 90;
 
             // Avoid upside-down labels; labels as rims
-            return (angle < 140) ? angle - 90 : angle + 90;
+            return (angle < 100 || angle > 270) ? angle : angle + 180;
             //return (angle < 180) ? angle - 90 : angle + 90;  // labels as spokes
         }
 

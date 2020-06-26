@@ -22,7 +22,8 @@ session_start();
 //POSTでユーザーID,始まり時間と終わり時間を獲得
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
-$grou_id = $_SESSION["groupid"];
+$group_id = $_SESSION["groupid"];
+$result = $_SESSION["result"] ;
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -41,6 +42,12 @@ $student_l = array();
 
 $student_l = explode(',', $group_member);
 
+$student_name_l = array();
+
+foreach ($student_l as $value){
+    $student_name_l[$value] = $result[$value];
+}
+
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
@@ -57,7 +64,7 @@ try {
 
     $jsonString = new JsonObject();
 
-    $jsonString->id = 'グループ '. $grou_id;    //change $_POST
+    $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
     for ($i = 0; $i < count($student_l); $i++){
@@ -82,7 +89,7 @@ ss;
         }
         $op_count = array_count_values($operation);
         $jsonString->children[$i]= new JsonObject();
-        $jsonString->children[$i]->id = $student_l[$i];
+        $jsonString->children[$i]->id = $student_name_l[$student_l[$i]];
         $jsonString->children[$i]->children = array();
 
         //TODO：if文をfor文に変更、ソースコード洗練

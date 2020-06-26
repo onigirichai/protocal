@@ -14,6 +14,7 @@ session_start();
 
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
+$result = $_SESSION["result"] ;
 $tmp_all = $_SESSION["all"];
 
 if($_POST['begin']){
@@ -36,6 +37,12 @@ if($_POST['end']){
 $student_l = array();
 
 $student_l = explode(',', $group_member);
+
+$student_name_l = array();
+
+foreach ($student_l as $value){
+    $student_name_l[$value] = $result[$value];
+}
 
 echo "success";
 
@@ -88,7 +95,7 @@ for ($i = 0; $i < count($student_l); $i++){
     }
 
     $jsonString->children[$i]= new JsonObject();
-    $jsonString->children[$i]->id = $student_l[$i];
+    $jsonString->children[$i]->id = $student_name_l[$student_l[$i]];
     $jsonString->children[$i]->children = array();
 
     $operation_count = 0;

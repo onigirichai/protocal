@@ -43,7 +43,7 @@ POSTデータに対応するデータを受け取る機能
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
-            ログインID
+            <img src='images/user_s_icon.png' alt= 'user_icon'>
         </li>
         <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
@@ -81,15 +81,32 @@ POSTデータに対応するデータを受け取る機能
         $group_member_id = $_POST["group_member_id"];
         $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
 
+        //id to name
+
+        $result = array();
+
+        if (($handle = fopen("data/lti_list.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle))) {
+                if ($data[0] != "id")
+                    $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+                    $result[$data[1]] = $data[2];
+                }
+            }
+            fclose($handle);
+
         $group_member_l = explode(',', $group_member_lmsuserid);
 
         $group_member_str = "";
-        $replace = "X";
-        foreach ($group_member_l as $value){
-            $group_member_str .= ' '.(string)$value;
-        }
 
-//        echo "<script> groupid = \"$group_member_str\";</script>";
+        $flag = true;
+        foreach ($group_member_l as $value){
+            if ($flag){
+                $group_member_str .= '  '.$result[$value];
+                $flag = false;
+            }else{
+                $group_member_str .= ', '.$result[$value];
+            }
+        }
 
         $_SESSION["logined_cqchat_userid"] = $user_id;
         $_SESSION["clicked_cqchat_userid"] = $clicked_user_id;
@@ -100,7 +117,15 @@ POSTデータに対応するデータを受け取る機能
         $_SESSION["groupid"] = $groupid;
         $_SESSION["group_member_id"] = $group_member_id;
         $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
-        $_SESSION["group_member_id_list"] = (string)$group_member_str;
+
+        if (array_key_exists($user_lmsid, $result)){
+            $_SESSION["logined_lms_username"] = $result[$user_lmsid];
+        }else{
+            echo "<script> alert(\"未登録\");</script>";
+        }
+
+        $_SESSION["group_member_id_list"] = $group_member_str;
+        $_SESSION["result"] = $result;
         $_SESSION["all"] = $_POST;
 
     }
@@ -109,23 +134,23 @@ POSTデータに対応するデータを受け取る機能
 
 </body>
 
-<?php
-    $group_member_lmsuserid = $_SESSION["group_member_id_list"];
-    echo "<script> groupid = \"$group_member_lmsuserid\";</script>";
-?>
 <script type="text/javascript">
-//    保存
-    function load_page() {
-        var st = sessionStorage.getItem("logined_lms_userid");
-        var course = sessionStorage.getItem("cqchat_courseid");
-        var begin = sessionStorage.getItem("datepicker_begin");
-        var end = sessionStorage.getItem("datepicker_end");
 
-        $("#st-status").html(st);
-        $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ ' ' +　st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'user_icon'>"　+ ' ' +　course);
-        $("#group_id").html("<img src='images/group_icon.png' alt= 'user_icon'>" + groupid);
+    function load_page() {
+
+        name_st = "<?php echo $_SESSION["logined_lms_username"]; ?>";
+        course = sessionStorage.getItem("cqchat_courseid");
+        groupid = "<?php echo $_SESSION["group_member_id_list"]; ?>";
+
+        // $("#st-status").html(st);
+        // $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ ' ' +　st);
+        $("#st-status").html(name_st);
+        $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ '  ' +　name_st);
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        $("#group_id").html("<img src='images/group_icon.png' alt= 'group_icon'>" + groupid);
     }
+
+
     sessionStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>);
     sessionStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>);
     sessionStorage.setItem("logined_lms_userid",<?php echo $_SESSION["logined_lms_userid"]; ?>);
@@ -133,6 +158,41 @@ POSTデータに対応するデータを受け取る機能
     sessionStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>);
     sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
     sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);
+    sessionStorage.setItem("name_st","<?php echo $_SESSION["logined_lms_username"]; ?>");
 
+
+
+    // function getCSV() {
+    //     return new Promise(function (resolve) {
+    //         req = new XMLHttpRequest();
+    //         req.open("get", "data/lti_list.csv",true);
+    //
+    //
+    //         req.onload = function () {
+    //             lti_dict = convertCSVtoDict(req.responseText);
+    //             resolve(lti_dict)
+    //         };
+    //         req.onerror = function () {
+    //             console.log("error");
+    //         };
+    //
+    //         req.send(null);
+    //     })
+    //
+    // }
+    //
+    // function convertCSVtoDict(str) {
+    //     result = {};
+    //     tmp = str.split("\n");
+    //     for(i=0;i<tmp.length;++i){
+    //         tmp_list = tmp[i].split(',');
+    //         result[tmp_list[1]] = tmp_list[2]
+    //     }
+    //
+    //     return result;
+    //
+    // }
 </script>
+
+
 

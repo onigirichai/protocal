@@ -46,7 +46,7 @@ D3ライブラリで可視化するaaaaaaa
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
-            ログインID
+            <img src='images/user_s_icon.png' alt= 'user_icon'>
         </li>
         <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
@@ -71,7 +71,7 @@ D3ライブラリで可視化するaaaaaaa
 <script type="text/javascript">
     function load_page() {
         //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
-        var st = sessionStorage.getItem("logined_lms_userid");
+        var st = sessionStorage.getItem("name_st");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
