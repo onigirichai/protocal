@@ -58,7 +58,7 @@ for($i = $tmp[0] + 1; $i<count($tmp_all);$i++){
 
 $dis_l = array("thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice");
 
-$dis_jp = array("thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice");
+$dis_jp = array("スレッド", "参照", "引用", "質問", "感謝", "同意", "不同意", "提案");
 
 $jsonString = new JsonObject();
 $jsonString->id = 'グループ '.$_SESSION["groupid"];    //change $_POST

@@ -24,42 +24,42 @@ D3ライブラリで可視化するaaaaaaa
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1> bagujo system</h1>
+            <h1> 個人学習・参加度の可視化システム</h1>
         </div>
     </div>
-    <!--    ナビゲーション・バー（ログイン、授業前、授業中）-->
+    <!--    ナビゲーション・バー（ログイン、授業前の個人学習、授業中の発言分類結果）-->
     <ul style="margin-bottom: 50px" class="nav nav-tabs">
         <li role="presentation">
-            <a href="index.php">login</a>
+            <a href="index.php">ログイン</a>
         </li>
         <li role="presentation" class="dropdown active">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">before class<span class="caret"></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前の個人学習<span class="caret"></span></a>
 
             <ul class="dropdown-menu">
-                <li ><a href="bookq_behavior.html">BookRoll learning</a></li>
+                <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="heatmap.html">ヒートマップ</a></li>
+                <li><a href="heatmap.html">教材の閲覧時間</a></li>
             </ul>
         </li>
         <li role="presentation">
-            <a href="discussion.html">in class</a>
+            <a href="discussion.html">授業中の発言分類結果</a>
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
-            login ID
+            ログインID
         </li>
         <li id="st-status" role="presentation" style="margin-left: 20px; margin-top: 10px"></li>
     </ul>
 
 </div>
 
-<h3 style="margin-left: 30px; margin-top: 10px">please select the period of time</h3>
+<h3 style="margin-left: 30px; margin-top: 10px">授業期間を選択してください</h3>
 <form style="margin-left: 30px">
-    <label for="datepicker_begin">start</label>
+    <label for="datepicker_begin">始まり</label>
     <input type="text" id="datepicker_begin" autocomplete="off">
-    <label for="datepicker_end">end</label>
+    <label for="datepicker_end">終わり</label>
     <input type="text" id="datepicker_end" autocomplete="off">
-    <button type="button" class="btn btn-light" onclick="select_time()">search</button>
+    <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
 
 <div id="group">
@@ -87,7 +87,6 @@ D3ライブラリで可視化するaaaaaaa
             dataType:'text',
             //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
             success: function (StuStatus) {
-                console.log(StuStatus);
                 if(StuStatus){
                     if (begin && end){
                         draw();
@@ -99,9 +98,6 @@ D3ライブラリで可視化するaaaaaaa
                     alert("未登録");
                     $("#password").val('')
                 }
-            },
-            error: function (StuStatus) {
-                console.log(StuStatus);
             }
         })
 

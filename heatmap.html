@@ -23,25 +23,25 @@ D3ライブラリで可視化する
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h1> バグジョ・システム</h1>
+            <h1> 個人学習・参加度の可視化システム</h1>
         </div>
     </div>
-    <!--    ナビゲーション・バー（ログイン、授業前、授業中）-->
+    <!--    ナビゲーション・バー（ログイン、授業前の個人学習、授業中の発言分類結果）-->
     <ul style="margin-bottom: 50px" class="nav nav-tabs">
         <li role="presentation">
             <a href="index.php">ログイン</a>
         </li>
         <li role="presentation" class="dropdown active">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前<span class="caret"></span></a>
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前の個人学習<span class="caret"></span></a>
 
             <ul class="dropdown-menu">
                 <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="heatmap.html">ヒートマップ</a></li>
+                <li><a href="heatmap.html">教材の閲覧時間</a></li>
             </ul>
         </li>
         <li role="presentation">
-            <a href="discussion.html">授業中</a>
+            <a href="discussion.html">授業中の発言分類結果</a>
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
@@ -135,7 +135,7 @@ D3ライブラリで可視化する
         });
     }
 
-    //ヒートマップでの可視化
+    //教材の閲覧時間での可視化
     function draw_heatmap(Data){
 
         // set the dimensions and margins of the graph
@@ -243,7 +243,7 @@ D3ライブラリで可視化する
         };
         var mousemove = function (d) {
             tooltip
-                .html(d.page + "ページ目を読む時間は<br>" + d.time + "s<br><strong>")
+                .html(d.page + "ページ目を閲覧した時間は<br>" + d.time + "s<br><strong>")
                 .style("left", (d3.mouse(this)[0] + 70) + "px")
                 .style("top", (d3.mouse(this)[1]) + "px")
         };

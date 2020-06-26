@@ -41,7 +41,7 @@ $student_l = array();
 
 $student_l = explode(',', $group_member);
 
-
+echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
 $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307';
@@ -51,14 +51,13 @@ $password_bookr = 'ledsbr';
 
 try {
     $dsn_bookr = new PDO($dsn_bookr, $user_bookr , $password_bookr);
-    echo "接続成功";
 } catch (PDOException $e) {
     echo "接続失敗: " . $e->getMessage() . "\n";
 }finally{
 
     $jsonString = new JsonObject();
 
-    $jsonString->id = 'group '. $grou_id;    //change $_POST
+    $jsonString->id = 'グループ '. $grou_id;    //change $_POST
     $jsonString->children = array();
 
     for ($i = 0; $i < count($student_l); $i++){
@@ -91,19 +90,19 @@ ss;
             $operation_count = 0;
             if ( array_key_exists('ADD MEMO', $op_count) ) {
                 $jsonString->children[$i]->children[$operation_count] = new JsonObject();
-                $jsonString->children[$i]->children[$operation_count]->id = 'memo';
+                $jsonString->children[$i]->children[$operation_count]->id = 'メモ';
                 $jsonString->children[$i]->children[$operation_count]->size = $op_count['ADD MEMO'] ;
                 $operation_count++;
             }
             if ( array_key_exists('ADD MARKER', $op_count) ) {
                 $jsonString->children[$i]->children[$operation_count] = new JsonObject();
-                $jsonString->children[$i]->children[$operation_count]->id = 'marker';
+                $jsonString->children[$i]->children[$operation_count]->id = 'マーカー';
                 $jsonString->children[$i]->children[$operation_count]->size = $op_count['ADD MARKER'] ;
                 $operation_count++;
             }
             if ( array_key_exists('ADD BOOKMARK', $op_count) ) {
                 $jsonString->children[$i]->children[$operation_count] = new JsonObject();
-                $jsonString->children[$i]->children[$operation_count]->id = 'bookmark';
+                $jsonString->children[$i]->children[$operation_count]->id = 'ブックマーク';
                 $jsonString->children[$i]->children[$operation_count]->size = $op_count['ADD BOOKMARK'] ;
                 $operation_count++;
             }
