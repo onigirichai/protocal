@@ -62,8 +62,11 @@ POSTデータに対応するデータを受け取る機能
         </div>
     </div>
 </div>
-
-
+<?php
+//
+//setcookie("SESSION", $_COOKIE['SESSION']);
+//
+//?>
 
 <?php
 

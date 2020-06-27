@@ -243,54 +243,89 @@ D3ライブラリで可視化する
             }
         }
 
+        function getCSV(URL) {
+            return new Promise(function (resolve) {
+                req = new XMLHttpRequest();
+                req.open("get", URL,true);
 
-        // ツールキットを作成
-        var tooltip = d3.select("#heatmap")
-            .append("div")
-            .style("opacity", 0)
-            .attr("class", "tooltip")
-            .style("background-color", "white")
-            .style("border", "solid")
-            .style("border-width", "2px")
-            .style("border-radius", "5px")
-            .style("padding", "5px")
-            .style("width", "800px");
 
-        // Three function that change the tooltip when user hover / move / leave a cell
-        var mouseover = function (d) {
-            tooltip.style("opacity", 1)
-        };
-        var mousemove = function (d) {
-            tooltip
-                .html(d.page + "ページ目を閲覧した時間は<br>" + d.time + "s<br><strong>")
-                .style("left", (d3.mouse(this)[0] + 70) + "px")
-                .style("top", (d3.mouse(this)[1]) + "px")
-        };
-        var mouseleave = function (d) {
-            tooltip.style("opacity", 0)
-        };
+                req.onload = function () {
+                    lti_dict = convertCSVtoDict(req.responseText);
+                    resolve(lti_dict)
+                };
+                req.onerror = function () {
+                    console.log("error");
+                };
 
-        // add the squares
-        svg.selectAll()
-            .data(time_array, function (d) {
-                return d.id + ':' + d.page;
+                req.send(null);
             })
-            .enter()
-            .append("rect")
-            .attr("x", function (d) {
-                return x(d.id)
-            })
-            .attr("y", function (d) {
-                return y(d.page)
-            })
-            .attr("width", x.bandwidth())
-            .attr("height", y.bandwidth())
-            .style("fill", function (d) {
-                return myColor(d.time)
-            })
-            .on("mouseover", mouseover)
-            .on("mousemove", mousemove)
-            .on("mouseleave", mouseleave)
+
+        }
+
+        function convertCSVtoDict(str) {
+            result = {};
+            tmp = str.split("\n");
+            for(i=0;i<tmp.length;++i){
+                tmp_list = tmp[i].split(',');
+                result[tmp_list[0]] = tmp_list[1]
+            }
+
+            return result;
+
+        }
+
+        getCSV("data/"+sessionStorage.getItem("cqchat_courseid")+".csv").then(function (img_url) {
+            // ツールキットを作成
+            var tooltip = d3.select("#heatmap")
+                .append("div")
+                .style("opacity", 0)
+                .attr("class", "tooltip")
+                .style("background-color", "white")
+                .style("border", "solid")
+                .style("border-width", "2px")
+                .style("border-radius", "5px")
+                .style("padding", "5px")
+                .style("width", "800px");
+
+            // Three function that change the tooltip when user hover / move / leave a cell
+            var mouseover = function (d) {
+                tooltip.style("opacity", 1)
+            };
+            var mousemove = function (d) {
+                tooltip
+                    .html(d.page + "ページ目を閲覧した時間は<br>" + d.time + "s<br><strong>"+
+                        "<img  src = \"" + img_url[d.page] + "\" width=\"768\" height=\"544\">")
+                    .style("left", (d3.mouse(this)[0] + 70) + "px")
+                    .style("top", (d3.mouse(this)[1]) + "px")
+            };
+            var mouseleave = function (d) {
+                tooltip.style("opacity", 0)
+            };
+
+            // add the squares
+            svg.selectAll()
+                .data(time_array, function (d) {
+                    return d.id + ':' + d.page;
+                })
+                .enter()
+                .append("rect")
+                .attr("x", function (d) {
+                    return x(d.id)
+                })
+                .attr("y", function (d) {
+                    return y(d.page)
+                })
+                .attr("width", x.bandwidth())
+                .attr("height", y.bandwidth())
+                .style("fill", function (d) {
+                    return myColor(d.time)
+                })
+                .on("mouseover", mouseover)
+                .on("mousemove", mousemove)
+                .on("mouseleave", mouseleave)
+        });
+
+
     }
 
 

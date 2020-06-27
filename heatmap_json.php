@@ -22,6 +22,7 @@ session_start();
 //POSTでユーザーID,始まり時間と終わり時間を獲得
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
+$course_id = $_SESSION["cqchat_courseid"];
 $id_name = $_SESSION["result"] ;
 
 if($_POST['begin']){
@@ -163,7 +164,7 @@ ss;
         array_push($page_images, $tmp);
     }
 
-    $f = fopen("data/test.csv", "w");
+    $f = fopen("data/".$course_id.".csv", "w");
     foreach ($page_images as $line){
         fputcsv($f, $line);
     }
