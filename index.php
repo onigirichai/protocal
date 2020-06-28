@@ -52,6 +52,9 @@ POSTデータに対応するデータを受け取る機能
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
+            <h3 style="margin-left: 30px; margin-top: 10px"><strong>基本情報</strong></h3>
+        </div>
+        <div class="col-md-12">
             <h3 id = "user_id" style="margin-left: 30px; margin-top: 10px"></h3>
         </div>
         <div class="col-md-12">
@@ -62,6 +65,8 @@ POSTデータに対応するデータを受け取る機能
         </div>
     </div>
 </div>
+
+<img src="images/system_intro.png", alt="system_intro", style="margin-left: 50px">
 <?php
 //
 //setcookie("SESSION", $_COOKIE['SESSION']);
@@ -88,7 +93,7 @@ POSTデータに対応するデータを受け取る機能
 
         $result = array();
 
-        if (($handle = fopen("data/lti_list.csv", "r")) !== FALSE) {
+        if (($handle = fopen("setting_csv/lti_list.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
                 $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
                 $result[$data[1]] = $data[2];
@@ -99,7 +104,7 @@ POSTデータに対応するデータを受け取る機能
         $course_begin = array();
         $course_end = array();
 
-        if (($handle = fopen("data/course_time.csv", "r")) !== FALSE) {
+        if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
 
                 $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);

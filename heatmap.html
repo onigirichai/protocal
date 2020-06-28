@@ -274,7 +274,7 @@ D3ライブラリで可視化する
 
         }
 
-        getCSV("data/"+sessionStorage.getItem("cqchat_courseid")+".csv").then(function (img_url) {
+        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+".csv").then(function (img_url) {
             // ツールキットを作成
             var tooltip = d3.select("#heatmap")
                 .append("div")

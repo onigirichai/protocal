@@ -10,7 +10,7 @@ date_default_timezone_set('Asia/tokyo');
 //LinuxでBatコマンドで実行する可能が、PHPのexecの関数で実行不可能
 
 //代替：ターミナルでSSHトンネル作成のコマンド入力、BookRollのデータベースにアクセス
-require_once 'SSHTunnel.php';
+require_once 'comm_function.php';
 
 //Jsonの形式でデータ保存のクラス
 class JsonObject{
@@ -23,7 +23,10 @@ session_start();
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
 $group_id = $_SESSION["groupid"];
+$course_id = $_SESSION["cqchat_courseid"];
+$cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
+
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -37,6 +40,9 @@ if($_POST['end']){
 }else{
     $end = time();
 }
+
+//ログ保存　"log/user_ud.csv"
+clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"behavior",$begin,$end);
 
 $student_l = array();
 

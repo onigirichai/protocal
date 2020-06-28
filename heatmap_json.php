@@ -10,7 +10,7 @@ date_default_timezone_set('Asia/tokyo');
 //LinuxでBatコマンドで実行する可能が、PHPのexecの関数で実行不可能
 
 //代替：ターミナルでSSHトンネル作成のコマンド入力、BookRollのデータベースにアクセス
-require_once "SSHTunnel.php";
+require_once "comm_function.php";
 
 //Jsonの形式でデータ保存のクラス
 class JsonObject
@@ -22,8 +22,11 @@ session_start();
 //POSTでユーザーID,始まり時間と終わり時間を獲得
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
+$group_id = $_SESSION["groupid"];
 $course_id = $_SESSION["cqchat_courseid"];
+$cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
+
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -37,6 +40,9 @@ if($_POST['end']){
 }else{
     $end = time();
 }
+
+//ログ保存　"log/user_ud.csv"
+clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"heatmap",$begin,$end);
 
 $student_l = array();
 
@@ -63,7 +69,7 @@ try {
 
     $jsonString = new JsonObject();
     //TODO：テスト用の'1'を修正
-    $jsonString->id = 'グループ '. $_SESSION["groupid"];    //change $_POST
+    $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
     for ($i = 0; $i < count($student_l); $i++) {
@@ -164,11 +170,15 @@ ss;
         array_push($page_images, $tmp);
     }
 
-    $f = fopen("data/".$course_id.".csv", "w");
-    foreach ($page_images as $line){
-        fputcsv($f, $line);
+
+    $filename = "setting_csv/".$course_id.".csv";
+    if (! file_exists ( $filename )) {
+        $f = fopen($filename, "w");
+        foreach ($page_images as $line) {
+            fputcsv($f, $line);
+        }
+        fclose($f);
     }
-    fclose($f);
 
     $dsn_bookr = null;
     $result = null;

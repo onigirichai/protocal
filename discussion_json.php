@@ -5,17 +5,23 @@
 
 date_default_timezone_set('Asia/tokyo');
 
-require_once 'SSHTunnel.php';
+require_once 'comm_function.php';
 
 class JsonObject{
 
 }
 session_start();
 
+
+
 $student = $_SESSION["logined_lms_userid"];
 $group_member = $_SESSION["group_member_lmsuserid"];
+$group_id = $_SESSION["groupid"];
+$course_id = $_SESSION["cqchat_courseid"];
+$cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
 $tmp_all = $_SESSION["all"];
+
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -29,6 +35,9 @@ if($_POST['end']){
 }else{
     $end = time();
 }
+
+//ログ保存　"log/user_ud.csv"
+clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"discussion",$begin,$end);
 
 //$dsn = 'mysql:dbname=bagujo;host=127.0.0.1;port=3306';
 //$dbuser = 'onigiri';
@@ -68,7 +77,7 @@ $dis_l = array("thread", "reference", "quoting", "question", "appreciation", "ag
 $dis_jp = array("スレッド", "参照", "引用", "質問", "感謝", "同意", "不同意", "提案");
 
 $jsonString = new JsonObject();
-$jsonString->id = 'グループ '.$_SESSION["groupid"];    //change $_POST
+$jsonString->id = 'グループ '.$group_id;    //change $_POST
 $jsonString->children = array();
 
 for ($i = 0; $i < count($student_l); $i++){
