@@ -84,9 +84,10 @@ D3ライブラリで可視化する
         var course = sessionStorage.getItem("cqchat_courseid");
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
+        var cqchat_name = sessionStorage.getItem("cqchat_name")
 
         $("#st-status").html(st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        $("#course_id").html("<img src='images/chat_icon.png' alt= 'chat_icon'>"　+ '  ' +　cqchat_name);
         if(begin && end){
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }else {
@@ -127,6 +128,20 @@ D3ライブラリで可視化する
 
 
     }
+
+    //ページを閉じる際のログ記録
+    window.onbeforeunload = function () {
+        $.ajax({
+            method:'POST',
+            url:'exit_log.php',
+            data:{
+                begin:sessionStorage.getItem("datepicker_begin"),
+                end:sessionStorage.getItem("datepicker_end")
+            },
+            dataType:'text',
+            success: function (StuStatus) {}
+        })
+    };
 
     function select_time(){
         //カレンダーの日付を選択し、ローカルストレージ

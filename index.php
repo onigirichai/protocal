@@ -66,7 +66,7 @@ POSTデータに対応するデータを受け取る機能
     </div>
 </div>
 
-<img src="images/system_intro.png", alt="system_intro", style="margin-left: 50px">
+<img src="images/system_intro_1.png", alt="system_intro", style="margin-left: 50px">
 <?php
 //
 //setcookie("SESSION", $_COOKIE['SESSION']);
@@ -84,7 +84,7 @@ POSTデータに対応するデータを受け取る機能
         $user_lmsid = $_POST["logined_lms_userid"];
         $clicked_user_lmsid = $_POST["clicked_lms_userid"];
         $cqchat_id = $_POST["cqchat_id"];
-        $cqchat_courseid = $_POST["cqchat_courseid"];
+        $cqchat_name = $_POST["cqchat_name"];
         $groupid = $_POST["groupid"];
         $group_member_id = $_POST["group_member_id"];
         $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
@@ -104,6 +104,7 @@ POSTデータに対応するデータを受け取る機能
         $course_begin = array();
         $course_end = array();
 
+
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
 
@@ -115,6 +116,18 @@ POSTデータに対応するデータを受け取る機能
             }
         }
         fclose($handle);
+
+        $course_name = array();
+        $cqchat_courseid = "";
+
+        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle))) {
+                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
+                $course_name[$data[0]] = $data[1];
+            }
+            $cqchat_courseid = array_keys($course_name, $cqchat_name)[0];
+        }
+        fclose($course_name);
 
 
 
@@ -154,6 +167,9 @@ POSTデータに対応するデータを受け取る機能
         $_SESSION["course_begin"] = $course_begin[$cqchat_courseid];
         $_SESSION["course_end"] = $course_end[$cqchat_courseid];
 
+        $_SESSION["cqchat_name"] = $cqchat_name;
+        $_SESSION["course_name"] = $course_name;
+
         $_SESSION["all"] = $_POST;
 
     }
@@ -174,7 +190,7 @@ POSTデータに対応するデータを受け取る機能
         // $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ ' ' +　st);
         $("#st-status").html(name_st);
         $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ '  ' +　name_st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　"教育基礎学入門第"+course+"回");
         $("#group_id").html("<img src='images/group_icon.png' alt= 'group_icon'>" + groupid);
     }
 
@@ -190,6 +206,7 @@ POSTデータに対応するデータを受け取る機能
 
     sessionStorage.setItem("course_begin","<?php echo $_SESSION["course_begin"]; ?>");
     sessionStorage.setItem("course_end","<?php echo $_SESSION["course_end"]; ?>");
+    sessionStorage.setItem("cqchat_name", "<?php echo $_SESSION["cqchat_name"]; ?>");
 
 
 

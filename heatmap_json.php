@@ -28,18 +28,7 @@ $cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
 
 
-if($_POST['begin']){
-    $begin = $_POST['begin'];
-    $begin = strtotime($begin);
-}else{
-    $begin = time();
-}
-if($_POST['end']){
-    $end = $_POST['end'];
-    $end = strtotime($end);
-}else{
-    $end = time();
-}
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 //ログ保存　"log/user_ud.csv"
 clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"heatmap",$begin,$end);
@@ -72,6 +61,44 @@ try {
     $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
+    $ttt = '%教育基礎学入門第'.$course_id.'%';
+
+    // Collect pages from the material
+    $page_images = array();
+    $page_no = 0;
+//    $page_markers = array();
+    $select_cour_page = <<<ss
+        SELECT page, version, viewer_url FROM bookroll.br_contents_file 
+        left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
+        where bookroll.br_contents.title like N'$ttt'
+ss;
+    $result_page = $dsn_bookr->query($select_cour_page);
+    foreach($result_page as $line){
+        $page_no = $line['page'];
+        $version = $line['version'];
+        $viewer_url = $line['viewer_url'];
+    }
+
+    $bookroll_host = 'la.ait.kyushu-u.ac.jp/qu/bookroll';
+
+
+    for ($i = 1; $i <= $page_no; $i++) {
+        $tmp = array();
+        array_push($tmp, $i);
+        array_push($tmp, "https://{$bookroll_host}/contents/unzipped/{$viewer_url}_{$version}/OPS/images/out_{$i}.jpg");
+        array_push($page_images, $tmp);
+    }
+
+
+    $filename = "setting_csv/".$course_id.".csv";
+    if (! file_exists ( $filename )) {
+        $f = fopen($filename, "w");
+        foreach ($page_images as $line) {
+            fputcsv($f, $line);
+        }
+        fclose($f);
+    }
+
     for ($i = 0; $i < count($student_l); $i++) {
 
 
@@ -80,12 +107,12 @@ try {
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title like N'%課題協学第1回%' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
+        where bookroll.br_contents.title like N'$ttt' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
 ss;
         $result = $dsn_bookr->query($select_cour_st);
 
         $read_time = array();
-        for ($t = 1; $t < 39; $t++){  //check
+        for ($t = 1; $t < $page_no; $t++){  //check
             $read_time[(string)$t] = 0;
         }
 
@@ -145,40 +172,7 @@ ss;
 
     file_put_contents('data/' . $student . '_heatmap.json', json_encode($jsonString));
 
-    // Collect pages from the material
-    $page_images = array();
-//    $page_markers = array();
-    $select_cour_page = <<<ss
-        SELECT page, version, viewer_url FROM bookroll.br_contents_file 
-        left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title like N'%課題協学第1回%'
-ss;
-    $result_page = $dsn_bookr->query($select_cour_page);
-    foreach($result_page as $line){
-        $page_no = $line['page'];
-        $version = $line['version'];
-        $viewer_url = $line['viewer_url'];
-    }
 
-    $bookroll_host = 'la.ait.kyushu-u.ac.jp/qu/bookroll';
-
-
-    for ($i = 1; $i <= $page_no; $i++) {
-        $tmp = array();
-        array_push($tmp, $i);
-        array_push($tmp, "https://{$bookroll_host}/contents/unzipped/{$viewer_url}_{$version}/OPS/images/out_{$i}.jpg");
-        array_push($page_images, $tmp);
-    }
-
-
-    $filename = "setting_csv/".$course_id.".csv";
-    if (! file_exists ( $filename )) {
-        $f = fopen($filename, "w");
-        foreach ($page_images as $line) {
-            fputcsv($f, $line);
-        }
-        fclose($f);
-    }
 
     $dsn_bookr = null;
     $result = null;

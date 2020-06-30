@@ -22,19 +22,7 @@ $cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
 $tmp_all = $_SESSION["all"];
 
-
-if($_POST['begin']){
-    $begin = $_POST['begin'];
-    $begin = strtotime($begin);
-}else{
-    $begin = time();
-}
-if($_POST['end']){
-    $end = $_POST['end'];
-    $end = strtotime($end);
-}else{
-    $end = time();
-}
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 //ログ保存　"log/user_ud.csv"
 clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"discussion",$begin,$end);

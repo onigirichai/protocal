@@ -27,19 +27,7 @@ $course_id = $_SESSION["cqchat_courseid"];
 $cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
 
-
-if($_POST['begin']){
-    $begin = $_POST['begin'];
-    $begin = strtotime($begin);
-}else{
-    $begin = time();
-}
-if($_POST['end']){
-    $end = $_POST['end'];
-    $end = strtotime($end);
-}else{
-    $end = time();
-}
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 //ログ保存　"log/user_ud.csv"
 clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"behavior",$begin,$end);
@@ -73,6 +61,8 @@ try {
     $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
+    $ttt = '%教育基礎学入門第'.$course_id.'%';
+
     for ($i = 0; $i < count($student_l); $i++){
 //        $timestamp = array();
         $operation = array();
@@ -82,7 +72,7 @@ try {
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title like N'%課題協学第1回%' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
+        where bookroll.br_contents.title like N'$ttt' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
 ss;
         $result = $dsn_bookr->query($select_cour_st);
 

@@ -87,7 +87,7 @@ D3ライブラリで可視化するaaaaaaa
         var end = sessionStorage.getItem("datepicker_end");
 
         $("#st-status").html(st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　"教育基礎学入門第"+course+"回");
         if(begin && end){
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }else {
@@ -122,7 +122,19 @@ D3ライブラリで可視化するaaaaaaa
 
     }
 
-
+    //ページを閉じる際のログ記録
+    window.onbeforeunload = function () {
+        $.ajax({
+            method:'POST',
+            url:'exit_log.php',
+            data:{
+                begin:sessionStorage.getItem("datepicker_begin"),
+                end:sessionStorage.getItem("datepicker_end")
+            },
+            dataType:'text',
+            success: function (StuStatus) {}
+        })
+    };
 
 
     function select_time(){

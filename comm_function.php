@@ -3,13 +3,11 @@
 //echo $_SERVER['HTTP_USER_AGENT'];
 //echo "<br />".$_SERVER ['REMOTE_ADDR'];
 //blog.csdn.net/chWow/java/article/details/73647919
-/**
- * 获取客户端类型，手机还是电脑，以及相应的操作系统类型。
- *
- * @param string $subject
- */
+
+date_default_timezone_set('Asia/tokyo');
+
+//OSのバージョンの獲得
 function get_os($agent) {
-    $os = false;
 
     if (preg_match ( '/win/i', $agent ) && strpos ( $agent, '95' )) {
         $os = 'Windows 95';
@@ -86,18 +84,19 @@ function get_os($agent) {
     } else if (preg_match ( '/offline/i', $agent )) {
         $os = 'offline';
     } else {
-        $os = '未知操作系统';
+        $os = 'unknown';
     }
     return $os;
 }
 
+//クライアントのログデータ記録
 function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$page, $begin, $end) {
     $useragent = $_SERVER ['HTTP_USER_AGENT'];
     $clientip = $_SERVER ['REMOTE_ADDR'];
 
     $os = get_os ( $useragent );
 
-    $time = date ( 'y-m-d h:m:s' );
+    $time = date ( 'Y-m-d H:i:s' );
 
     $data = array();
     array_push($data, $student_id);
@@ -111,8 +110,8 @@ function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$p
     array_push($data, $time);
     array_push($data, strtotime($time));
     array_push($data, $page);
-    array_push($data, date ( 'y-m-d h:m:s' ,$begin));
-    array_push($data, date ( 'y-m-d h:m:s' ,$end));
+    array_push($data, date ( 'Y-m-d H:i:s' ,$begin));
+    array_push($data, date ( 'Y-m-d H:i:s' ,$end));
     array_push($data, $begin);
     array_push($data, $end);
 
@@ -129,6 +128,24 @@ function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$p
     }
 
 
+}
+
+//開始時間と終了時間の獲得
+function get_begin_end($b, $e){
+    if($b){
+        $begin = $b;
+        $begin = strtotime(date("$begin 00:00:00"));
+    }else{
+        $begin = time();
+    }
+    if($e){
+        $end = $e;
+        $end = strtotime(date("$end 00:00:00"));
+    }else{
+        $end = time();
+    }
+
+    return [$begin, $end];
 }
 
 
