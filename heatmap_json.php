@@ -46,7 +46,7 @@ foreach ($student_l as $value){
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307';
+$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
 $user_bookr = 'student';
 $password_bookr = 'ledsbr';
 
@@ -61,22 +61,35 @@ try {
     $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
-    $ttt = '%教育基礎学入門第'.$course_id.'%';
+    $ttt = '教育基礎学入門第'.$course_id.'回';
 
     // Collect pages from the material
     $page_images = array();
     $page_no = 0;
+    $version = '';
+    $viewer_url = '';
+
 //    $page_markers = array();
     $select_cour_page = <<<ss
-        SELECT page, version, viewer_url FROM bookroll.br_contents_file 
+        SELECT * FROM bookroll.br_contents_file 
         left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title like N'$ttt'
+        where bookroll.br_contents.title = '$ttt'
 ss;
     $result_page = $dsn_bookr->query($select_cour_page);
+//    foreach($result_page as $line){
+//        $time = $line['created'];
+//        $tt = $line['title'];
+//        $page_no = $line['page'];
+//        $version = $line['version'];
+//        $viewer_url = $line['viewer_url'];
+//    }
     foreach($result_page as $line){
-        $page_no = $line['page'];
-        $version = $line['version'];
-        $viewer_url = $line['viewer_url'];
+        $time = $line['created'];
+        if (strtotime($time)>strtotime(date("2020-01-01 00:00:00"))){
+            $page_no = $line['page'];
+            $version = $line['version'];
+            $viewer_url = $line['viewer_url'];
+        }
     }
 
     $bookroll_host = 'la.ait.kyushu-u.ac.jp/qu/bookroll';
@@ -112,7 +125,7 @@ ss;
         $result = $dsn_bookr->query($select_cour_st);
 
         $read_time = array();
-        for ($t = 1; $t < $page_no; $t++){  //check
+        for ($t = 1; $t < $page_no + 1; $t++){  //check
             $read_time[(string)$t] = 0;
         }
 

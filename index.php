@@ -156,7 +156,7 @@ POSTデータに対応するデータを受け取る機能
         $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
 
         if (array_key_exists($user_lmsid, $result)){
-            $_SESSION["logined_lms_username"] = $result[$user_lmsid];
+            $_SESSION["clicked_lms_username"] = $result[$clicked_user_lmsid];
         }else{
             echo "<script> alert(\"未登録\");</script>";
         }
@@ -182,7 +182,7 @@ POSTデータに対応するデータを受け取る機能
 
     function load_page() {
 
-        name_st = "<?php echo $_SESSION["logined_lms_username"]; ?>";
+        name_st = "<?php echo $_SESSION["clicked_lms_username"]; ?>";
         course = sessionStorage.getItem("cqchat_courseid");
         groupid = "<?php echo $_SESSION["group_member_id_list"]; ?>";
 
@@ -202,7 +202,7 @@ POSTデータに対応するデータを受け取る機能
     sessionStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>);
     sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
     sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);
-    sessionStorage.setItem("name_st","<?php echo $_SESSION["logined_lms_username"]; ?>");
+    sessionStorage.setItem("name_st","<?php echo $_SESSION["clicked_lms_username"]; ?>");
 
     sessionStorage.setItem("course_begin","<?php echo $_SESSION["course_begin"]; ?>");
     sessionStorage.setItem("course_end","<?php echo $_SESSION["course_end"]; ?>");
