@@ -155,7 +155,7 @@ POSTデータに対応するデータを受け取る機能
         $_SESSION["group_member_id"] = $group_member_id;
         $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
 
-        if (array_key_exists($user_lmsid, $result)){
+        if (array_key_exists($clicked_user_lmsid, $result)){
             $_SESSION["clicked_lms_username"] = $result[$clicked_user_lmsid];
         }else{
             echo "<script> alert(\"未登録\");</script>";
@@ -194,7 +194,7 @@ POSTデータに対応するデータを受け取る機能
         $("#group_id").html("<img src='images/group_icon.png' alt= 'group_icon'>" + groupid);
     }
 
-
+    console.log("<?php echo $_SESSION["cqchat_name"]; ?>");
     sessionStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>);
     sessionStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>);
     sessionStorage.setItem("logined_lms_userid",<?php echo $_SESSION["logined_lms_userid"]; ?>);
