@@ -47,6 +47,7 @@ echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
 $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
 $user_bookr = 'student';
 $password_bookr = 'ledsbr';
 
@@ -61,8 +62,6 @@ try {
     $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
-    $ttt = '教育基礎学入門第'.$course_id.'回';
-
     // Collect pages from the material
     $page_images = array();
     $page_no = 0;
@@ -73,7 +72,7 @@ try {
     $select_cour_page = <<<ss
         SELECT * FROM bookroll.br_contents_file 
         left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title = '$ttt'
+        where bookroll.br_contents.title = '$course_id'
 ss;
     $result_page = $dsn_bookr->query($select_cour_page);
 //    foreach($result_page as $line){
@@ -120,7 +119,7 @@ ss;
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title like N'$ttt' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
+        where bookroll.br_contents.title = '$course_id' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
 ss;
         $result = $dsn_bookr->query($select_cour_st);
 

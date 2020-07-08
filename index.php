@@ -105,6 +105,22 @@ POSTデータに対応するデータを受け取る機能
         $course_end = array();
 
 
+        $course_name = array();
+        $dis_title = array();
+        $cqchat_courseid = "";
+
+        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle))) {
+                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
+                $tmp = explode(',', $data[0]);
+                $course_name[$tmp[1]] = $tmp[0];
+                $dis_title[$tmp[1]] = $data[1];
+            }
+            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
+            $cqchat_courseid = $course_name[$tmp_key];
+        }
+        fclose($handle);
+
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
 
@@ -113,22 +129,13 @@ POSTデータに対応するデータを受け取る機能
 
                 $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
                 $course_end[$data[0]] = $data[2];
+
+                $tmp_key = array_keys($dis_title, $cqchat_name)[0];
+                $_SESSION["course_begin"] = $course_begin[$tmp_key];
+                $_SESSION["course_end"] = $course_end[$tmp_key];
             }
         }
         fclose($handle);
-
-        $course_name = array();
-        $cqchat_courseid = "";
-
-        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle))) {
-                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
-                $course_name[$data[0]] = $data[1];
-            }
-            $cqchat_courseid = array_keys($course_name, $cqchat_name)[0];
-        }
-        fclose($course_name);
-
 
 
         $group_member_l = explode(',', $group_member_lmsuserid);
@@ -164,8 +171,7 @@ POSTデータに対応するデータを受け取る機能
         $_SESSION["group_member_id_list"] = $group_member_str;
         $_SESSION["result"] = $result;
 
-        $_SESSION["course_begin"] = $course_begin[$cqchat_courseid];
-        $_SESSION["course_end"] = $course_end[$cqchat_courseid];
+
 
         $_SESSION["cqchat_name"] = $cqchat_name;
         $_SESSION["course_name"] = $course_name;
@@ -190,7 +196,7 @@ POSTデータに対応するデータを受け取る機能
         // $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ ' ' +　st);
         $("#st-status").html(name_st);
         $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ '  ' +　name_st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　"教育基礎学入門第"+course+"回");
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
         $("#group_id").html("<img src='images/group_icon.png' alt= 'group_icon'>" + groupid);
     }
 
@@ -200,7 +206,7 @@ POSTデータに対応するデータを受け取る機能
     sessionStorage.setItem("logined_lms_userid",<?php echo $_SESSION["logined_lms_userid"]; ?>);
     sessionStorage.setItem("clicked_lms_userid",<?php echo $_SESSION["clicked_lms_userid"]; ?>);
     sessionStorage.setItem("cqchat_id",<?php echo $_SESSION["cqchat_id"]; ?>);
-    sessionStorage.setItem("cqchat_courseid",<?php echo $_SESSION["cqchat_courseid"]; ?>);
+    sessionStorage.setItem("cqchat_courseid","<?php echo $_SESSION["cqchat_courseid"]; ?>");
     sessionStorage.setItem("groupid",<?php echo $_SESSION["groupid"]; ?>);
     sessionStorage.setItem("name_st","<?php echo $_SESSION["clicked_lms_username"]; ?>");
 
