@@ -46,8 +46,8 @@ foreach ($student_l as $value){
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
-//$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
+$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
 $user_bookr = 'student';
 $password_bookr = 'ledsbr';
 
@@ -82,9 +82,17 @@ ss;
 //        $version = $line['version'];
 //        $viewer_url = $line['viewer_url'];
 //    }
+
+    $dateb_tmp = "2020-01-01 00:00:00";
+    $datee_tmp = "2021-01-01 00:00:00";
+    if ($course_id == "教育情報工学第13回"){
+        $dateb_tmp = "2019-01-01 00:00:00";
+        $datee_tmp = "2020-01-01 00:00:00";
+    }
+
     foreach($result_page as $line){
         $time = $line['created'];
-        if (strtotime($time)>strtotime(date("2020-01-01 00:00:00"))){
+        if (strtotime(date($datee_tmp))>strtotime($time)&& strtotime($time)>strtotime(date($dateb_tmp))){
             $page_no = $line['page'];
             $version = $line['version'];
             $viewer_url = $line['viewer_url'];
@@ -102,7 +110,7 @@ ss;
     }
 
 
-    $filename = "setting_csv/".$course_id.".csv";
+    $filename = "setting_csv/".$course_id."_2020.csv";
     if (! file_exists ( $filename )) {
         $f = fopen($filename, "w");
         foreach ($page_images as $line) {

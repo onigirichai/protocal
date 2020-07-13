@@ -260,7 +260,6 @@ D3ライブラリで可視化する
                 req = new XMLHttpRequest();
                 req.open("get", URL,true);
 
-
                 req.onload = function () {
                     lti_dict = convertCSVtoDict(req.responseText);
                     resolve(lti_dict)
@@ -276,6 +275,7 @@ D3ライブラリで可視化する
 
         function convertCSVtoDict(str) {
             result = {};
+            console.log(str);
             tmp = str.split("\n");
             for(i=0;i<tmp.length;++i){
                 tmp_list = tmp[i].split(',');
@@ -286,7 +286,7 @@ D3ライブラリで可視化する
 
         }
 
-        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+".csv").then(function (img_url) {
+        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+"_2020.csv").then(function (img_url) {
             // ツールキットを作成
             var tooltip = d3.select("#heatmap")
                 .append("div")

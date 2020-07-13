@@ -112,6 +112,7 @@ POSTデータに対応するデータを受け取る機能
         if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
                 $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
+                echo "<script> alert(\"$data[1]\");</script>";
                 $tmp = explode(',', $data[0]);
                 $course_name[$tmp[1]] = $tmp[0];
                 $dis_title[$tmp[1]] = $data[1];
@@ -120,6 +121,18 @@ POSTデータに対応するデータを受け取る機能
             $cqchat_courseid = $course_name[$tmp_key];
         }
         fclose($handle);
+
+//        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
+//            while (($data = fgetcsv($handle))) {
+//                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+//                $tmp = explode(',', $data[0]);
+//                $course_name[$data[1]] = $data[0];
+//                $dis_title[$data[1]] = $data[2];
+//            }
+//            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
+//            $cqchat_courseid = $course_name[$tmp_key];
+//        }
+//        fclose($handle);
 
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
@@ -152,31 +165,34 @@ POSTデータに対応するデータを受け取る機能
             }
         }
 
-        $_SESSION["logined_cqchat_userid"] = $user_id;
-        $_SESSION["clicked_cqchat_userid"] = $clicked_user_id;
-        $_SESSION["logined_lms_userid"] = $user_lmsid;
-        $_SESSION["clicked_lms_userid"] = $clicked_user_lmsid;
-        $_SESSION["cqchat_id"] = $cqchat_id;
-        $_SESSION["cqchat_courseid"] = $cqchat_courseid;
-        $_SESSION["groupid"] = $groupid;
-        $_SESSION["group_member_id"] = $group_member_id;
-        $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
 
         if (array_key_exists($clicked_user_lmsid, $result)){
             $_SESSION["clicked_lms_username"] = $result[$clicked_user_lmsid];
+            $_SESSION["logined_cqchat_userid"] = $user_id;
+            $_SESSION["clicked_cqchat_userid"] = $clicked_user_id;
+            $_SESSION["logined_lms_userid"] = $user_lmsid;
+            $_SESSION["clicked_lms_userid"] = $clicked_user_lmsid;
+            $_SESSION["cqchat_id"] = $cqchat_id;
+            $_SESSION["cqchat_courseid"] = $cqchat_courseid;
+            $_SESSION["groupid"] = $groupid;
+            $_SESSION["group_member_id"] = $group_member_id;
+            $_SESSION["group_member_lmsuserid"] = $group_member_lmsuserid;
+            $_SESSION["group_member_id_list"] = $group_member_str;
+            $_SESSION["result"] = $result;
+
+
+
+            $_SESSION["cqchat_name"] = $cqchat_name;
+            $_SESSION["course_name"] = $course_name;
+
+            $_SESSION["all"] = $_POST;
         }else{
             echo "<script> alert(\"未登録\");</script>";
+            $_SESSION = array();
+            session_destroy();
         }
 
-        $_SESSION["group_member_id_list"] = $group_member_str;
-        $_SESSION["result"] = $result;
 
-
-
-        $_SESSION["cqchat_name"] = $cqchat_name;
-        $_SESSION["course_name"] = $course_name;
-
-        $_SESSION["all"] = $_POST;
 
     }
 
