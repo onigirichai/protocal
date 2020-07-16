@@ -76,7 +76,9 @@ D3ライブラリで可視化する
     </div>
 </div>
 
+
 <div id="heatmap" style="margin-left: 30px"></div>
+
 
 </body>
 
@@ -242,6 +244,11 @@ D3ライブラリで可視化する
         // var page = [];
         // var value = [];
         var time_array = [];
+
+        var time_label = [];
+
+
+
         for (var row = 0; row < student_id.length; row++){
             for (var col = 0; col < pages.length; col++){
                 time_array[row*pages.length+col] = {};
@@ -254,8 +261,75 @@ D3ライブラリで可視化する
                 time_array[row*pages.length+col]["id"] = Data.children[row].id;
                 time_array[row*pages.length+col]["page"] = col+1;
                 time_array[row*pages.length+col]["time"] = Object.values(values_obj)[col].size;
+
+                time_label[row*pages.length+col] = Object.values(values_obj)[col].size;
             }
         }
+
+
+        function compareFunc(a, b){
+            return a-b;
+        }
+        time_label.sort(compareFunc);
+
+        var time_label_uni = [];
+
+        $.each(time_label, function(i, el){
+            if($.inArray(el, time_label_uni) === -1) time_label_uni.push(el);
+        });
+
+        var rect_size = {top: 0, right: 100, bottom: 450/time_label_uni.length, left: 60};
+
+
+
+        var label = d3.select("#heatmap")
+            .append("svg")
+            .attr("id", "label")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom + 30)
+            .append("g")
+            .attr("transform",
+                "translate(" + (margin.left) + ",20)");
+
+        d3.select('#label')
+            .append('text')
+            .attr("font-family","Verdana")
+            .attr("stroke","#000")
+            .attr('transform', 'translate(50,20)')
+            .text("閲覧時間(秒)");
+
+        d3.select('#label')
+            .append('text')
+            .attr("font-family","Verdana")
+            .attr("stroke","#000")
+            .attr('transform', 'translate(50,35)')
+            .text(time_label_uni[time_label_uni.length-1]);
+
+        d3.select('#label')
+            .append('text')
+            .attr("font-family","Verdana")
+            .attr("stroke","#000")
+            .attr('transform', 'translate(50,480)')
+            .text(time_label_uni[0]);
+
+
+        label.selectAll('g')
+            .data(time_label_uni)
+            .enter()
+            .append('rect')
+            .attr('transform', function (d, i) {
+                return 'translate('+ 0 + ',' + (time_label_uni.length-i)*450/time_label_uni.length +')';
+            })
+            .attr('x',rect_size.left)
+            .attr('width',rect_size.right)
+            .attr('y',rect_size.top)
+            .attr('height',rect_size.bottom)
+            .style('fill',function (d) {
+                return myColor(d)
+            });
+
+        // label.selectAll('g')
+        //     .
 
         function getCSV(URL) {
             return new Promise(function (resolve) {
