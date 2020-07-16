@@ -86,7 +86,7 @@ for ($i = 0; $i < count($student_l); $i++){
         $timestamp = $tmp_ts_socialvalue[0];
         if ($timestamp >= $begin && $timestamp < $end){
             for ($d = 0; $d < count($dis_l); $d++){
-                $discussion[$dis_l[$d]] += $tmp_ts_socialvalue[$d + 6];
+                $discussion[$dis_l[$d]] += $tmp_ts_socialvalue[$d + 7];
             }
         }
     }

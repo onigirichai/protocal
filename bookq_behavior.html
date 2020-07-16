@@ -57,11 +57,13 @@ D3ライブラリで可視化するaaaaaaa
 
 <form style="margin-left: 30px">
     <label for="datepicker_begin">始まり</label>
-    <input type="text" id="datepicker_begin" autocomplete="off">
+    <input type="text" id="datepicker_begin" style="color: red" autocomplete="off">
     <label for="datepicker_end">終わり</label>
-    <input type="text" id="datepicker_end" autocomplete="off">
+    <input type="text" id="datepicker_end" style="color: red" autocomplete="off">
     <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
+
+<h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は授業期間提示用</strong>、カレンダーから選択し、両日付が赤くなると検索してください</h5>
 
 <div class="container-fluid">
     <div class="row">
@@ -74,6 +76,7 @@ D3ライブラリで可視化するaaaaaaa
 
 <div id="group">
     <svg id = "sunburst" style="width: 400px; height: 400px; margin-left: 20px; margin-top: 20px"></svg>
+    <svg id = "label" style="width: 400px; height: 400px; margin-left: 20px; margin-top: 20px"></svg>
 </div>
 </body>
 
@@ -162,7 +165,7 @@ D3ライブラリで可視化するaaaaaaa
         var Width = $('#sunburst').width(),
             Height = $('#sunburst').height(),
             Radius = Math.min(Width, Height) / 2,
-            Color = d3.scaleOrdinal(d3.schemeCategory20b);
+            Color = d3.scaleOrdinal(d3.schemeCategory10);
 
 
         var g = d3.select('svg')
@@ -251,6 +254,44 @@ D3ライブラリで可視化するaaaaaaa
             }else{
                 alert("データなし、頑張ってください");
             }
+
+            //draw a label
+            var rect_size = {top: 30, right: 30, bottom: 30, left: 30};
+            var label = d3.select('#label')
+                .append('g')
+                .attr('transform', 'translate('+ Width / 20 + ',' + Height / 20 + ')');
+
+            var parents = new Array();
+            for (i = 1; i<Nodes.length;i++){
+                if(Nodes[i].children){
+                    parents[i-1] = Nodes[i]
+                }
+            }
+
+            var rect = label.selectAll('g')
+                .data(parents)
+                .enter();
+
+            rect.append('rect')
+                .attr('transform', function (d, i) {
+                    return 'translate('+ Width / 20 + ',' + (Height / 20 + (i-1)*50) +')';
+                })
+                .attr('x',rect_size.left)
+                .attr('width',rect_size.right)
+                .attr('y',rect_size.top)
+                .attr('height',rect_size.bottom)
+                .style('fill',function (d) {
+                    return Color(d.data.id)
+                });
+
+            rect.append('text')
+                .attr('dx', '-20')
+                .attr('dy', '0')
+                .attr('transform', function (d, i) {
+                    return 'translate('+ (Width / 20 + 100) + ',' + (Height / 20 + i *50) +')';
+                })
+                .text(function(d) { return d.data.id });
+
 
         }
 

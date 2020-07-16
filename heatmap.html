@@ -59,11 +59,13 @@ D3ライブラリで可視化する
 
 <form style="margin-left: 30px">
     <label for="datepicker_begin">始まり</label>
-    <input type="text" id="datepicker_begin" autocomplete="off">
+    <input type="text" id="datepicker_begin" style="color: red" autocomplete="off">
     <label for="datepicker_end">終わり</label>
-    <input type="text" id="datepicker_end" autocomplete="off">
+    <input type="text" id="datepicker_end" style="color: red" autocomplete="off">
     <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
+
+<h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は授業期間提示用</strong>、カレンダーから選択し、両日付が赤くなると検索してください</h5>
 
 <div class="container-fluid">
     <div class="row">
