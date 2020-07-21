@@ -53,16 +53,24 @@ $userid_timestamp = array_keys($tmp_all);
 
 $tmp = array_keys($userid_timestamp,"common_groupingid");
 
-for($i = $tmp[0] + 1; $i<count($tmp_all);$i++){
+$timestamp_l = array();
+
+for($i = $tmp[0] + 1; $i<count($tmp_all)-2;$i++){
     $tmp_ts_id = explode('_',$userid_timestamp[$i]);
+
     $tmp_timestamp = $tmp_ts_id[count($tmp_ts_id)-1];
+    array_push($timestamp_l, $tmp_timestamp);
+
     $tmp_member_id = $tmp_ts_id[count($tmp_ts_id)-2];
     array_push($dis_st[$tmp_member_id], $tmp_timestamp.','.$tmp_all[$userid_timestamp[$i]]);
 }
 
-$dis_l = array("thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice");
+$_SESSION["dis_begin"] = date ( 'Y-m-d H:i:s' ,min($timestamp_l));
+$_SESSION["dis_end"] = date ( 'Y-m-d H:i:s' ,max($timestamp_l));
 
-$dis_jp = array("スレッド", "参照", "引用", "質問", "感謝", "同意", "不同意", "提案");
+$dis_l = array("emotion","humor","selfdisclosure","paralanguage","value","thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice","vocatives","inclusive","phatics","social_sharing","reflection");
+
+$dis_jp = array("感情","ユーモア","自己開示","パラ言語","価値","スレッド", "参照", "引用", "質問", "感謝", "同意", "不同意", "提案", "呼格", "集団言葉", "挨拶", "情報共有", "省察");
 
 $jsonString = new JsonObject();
 $jsonString->id = 'グループ '.$group_id;    //change $_POST
@@ -71,6 +79,11 @@ $jsonString->children = array();
 for ($i = 0; $i < count($student_l); $i++){
 
     $discussion = array(
+        "emotion" => 0,
+        "humor" => 0,
+        "selfdisclosure" => 0,
+        "paralanguage" => 0,
+        "value" => 0,
         "thread" => 0,
         "reference" => 0,
         "quoting" => 0,
@@ -78,7 +91,12 @@ for ($i = 0; $i < count($student_l); $i++){
         "appreciation" => 0,
         "agreement" => 0,
         "disagreement" => 0,
-        "advice" => 0
+        "advice" => 0,
+        "vocatives" => 0,
+        "inclusive" => 0,
+        "phatics" => 0,
+        "social_sharing" => 0,
+        "reflection" => 0
     );
 
     foreach($dis_st[$student_l[$i]] as $value){
@@ -86,7 +104,7 @@ for ($i = 0; $i < count($student_l); $i++){
         $timestamp = $tmp_ts_socialvalue[0];
         if ($timestamp >= $begin && $timestamp < $end){
             for ($d = 0; $d < count($dis_l); $d++){
-                $discussion[$dis_l[$d]] += $tmp_ts_socialvalue[$d + 7];
+                $discussion[$dis_l[$d]] += $tmp_ts_socialvalue[$d + 2];
             }
         }
     }

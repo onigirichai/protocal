@@ -33,13 +33,13 @@ POSTデータに対応するデータを受け取る機能
             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前の個人学習<span class="caret"></span></a>
 
             <ul class="dropdown-menu">
-                <li ><a class="dropdown-item" href="bookq_behavior.html">BookRoll学習活動</a></li>
+                <li ><a class="dropdown-item" href="behavior.php">BookRoll学習活動</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a class="dropdown-item" href="heatmap.html">教材の閲覧時間</a></li>
+                <li><a class="dropdown-item" href="heatmap.php">教材の閲覧時間</a></li>
             </ul>
         </li>
         <li role="presentation">
-            <a class="nav-link" href="discussion.html">授業中の発言分類結果</a>
+            <a class="nav-link" href="discussion.php">授業中の発言分類結果</a>
         </li>
 
         <li role="presentation" style="margin-left: 150px; margin-top: 10px">
@@ -112,7 +112,6 @@ POSTデータに対応するデータを受け取る機能
         if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
                 $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
-                echo "<script> alert(\"$data[1]\");</script>";
                 $tmp = explode(',', $data[0]);
                 $course_name[$tmp[1]] = $tmp[0];
                 $dis_title[$tmp[1]] = $data[1];

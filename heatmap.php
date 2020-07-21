@@ -35,9 +35,9 @@ D3ライブラリで可視化する
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前の個人学習<span class="caret"></span></a>
 
             <ul class="dropdown-menu">
-                <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
+                <li ><a href="behavior.php">BookRoll学習活動</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="heatmap.html">教材の閲覧時間</a></li>
+                <li><a href="heatmap.php">教材の閲覧時間</a></li>
             </ul>
         </li>
         <li role="presentation">
@@ -105,28 +105,28 @@ D3ライブラリで可視化する
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }
 
-            $.ajax({
-                method:'POST',
-                url:'heatmap_json.php',
-                data:{
-                    begin: begin,
-                    end: end
-                },
-                dataType:'text',
-                success: function (StuStatus) {
-                    if(StuStatus){
-                        //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
-                        //ログイン検証、データを読み込み
+        $.ajax({
+            method:'POST',
+            url:'heatmap_json.php',
+            data:{
+                begin: begin,
+                end: end
+            },
+            dataType:'text',
+            success: function (StuStatus) {
+                if(StuStatus){
+                    //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
+                    //ログイン検証、データを読み込み
 
-                        load_data();
+                    load_data();
 
 
-                    }else if (StuStatus==="false"){
-                        alert("未登録");
-                        $("#password").val('')
-                    }
+                }else if (StuStatus==="false"){
+                    alert("未登録");
+                    $("#password").val('')
                 }
-            })
+            }
+        })
 
 
     }
@@ -142,7 +142,7 @@ D3ライブラリで可視化する
             },
             dataType:'text',
             success: function (StuStatus) {}
-    })
+        })
     };
 
 

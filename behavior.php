@@ -36,9 +36,9 @@ D3ライブラリで可視化するaaaaaaa
             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="true">授業前の個人学習<span class="caret"></span></a>
 
             <ul class="dropdown-menu">
-                <li ><a href="bookq_behavior.html">BookRoll学習活動</a></li>
+                <li ><a href="bookroll.php">BookRoll学習活動</a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="heatmap.html">教材の閲覧時間</a></li>
+                <li><a href="heatmap.php">教材の閲覧時間</a></li>
             </ul>
         </li>
         <li role="presentation">
