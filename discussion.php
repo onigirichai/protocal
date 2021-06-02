@@ -207,7 +207,7 @@ D3ライブラリで可視化する
                 "ユーモアを表現する",
                 "自己開示（好き嫌い）をする",
                 "周辺言語（絵文字など）を使う",
-                "価値ある発言をする",
+                "自分の価値観に関する発言をする",
                 "話題を続ける",
                 "他者の発言に参照する",
                 "他者の発言を引用する",
@@ -254,7 +254,7 @@ D3ライブラリで可視化する
 
             var mousemove = function(d) {
                 tooltip
-                    .html(d.depth == 2? sp_com[sp.indexOf(d.data.id)]:d.data.id+ ":" + d.value)
+                    .html(d.depth == 2? sp_com[sp.indexOf(d.data.id)]+ ":" + d.value:d.data.id+ ":" + d.value)
                     .style("left", (d3.mouse(this)[0]) +300+ "px")
                     .style("top", (d3.mouse(this)[1]) +600 +"px")
 

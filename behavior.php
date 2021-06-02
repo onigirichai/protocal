@@ -67,6 +67,7 @@ D3ライブラリで可視化するaaaaaaa
 <h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は該当授業の前の一週間</strong></h5>
 <h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択し、両日付が赤くなると検索してください</h5>
 
+<img style="margin-left: 30px" src='images/notification.png' alt='notification'>
 
 <div class="container-fluid">
     <div class="row">

@@ -69,6 +69,8 @@ D3ライブラリで可視化する
 <h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は該当授業の前の一週間</strong></h5>
 <h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択し、両日付が赤くなると検索してください</h5>
 
+<img style="margin-left: 30px" src='images/notification.png' alt='notification'>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
@@ -242,8 +244,9 @@ D3ライブラリで可視化する
 
         // Build color scale
         var myColor = d3.scaleLinear()
-            .range(["white", "#ff0000"])
+            .range(["#faffff", "#00aaff"])
             .domain([1,100]);
+
 
         //Read the data
         // d3.json("data/133_behavior.json", function(data) {
@@ -280,6 +283,30 @@ D3ライブラリで可視化する
         }
         time_label.sort(compareFunc);
 
+
+        function showtime(val) {
+            if(val<60){
+                return val + "秒";
+            }else {
+            var min_total = Math.floor(val/60);
+            var sec = Math.floor((val%60));
+            }
+            if(min_total<60){
+                return min_total + "分" + sec + "秒";
+            }else {
+                var hour_total = Math.floor(min_total/60);
+                var min = Math.floor(min_total % 60);
+            }
+            if (hour_total<24){
+                return hour_total + "時間" + min + "分" + sec + "秒";
+            }else{
+                var date_total = Math.floor(hour_total/24);
+                var hour = Math.floor(hour_total % 24);
+                return  date_total + "日" + hour + "時間" + min + "分" + sec + "秒";
+            }
+
+        }
+
         var time_label_uni = [];
 
         $.each(time_label, function(i, el){
@@ -288,7 +315,8 @@ D3ライブラリで可視化する
 
         var rect_size = {top: 0, right: 100, bottom: 500/time_label_uni.length, left: 60};
 
-
+        var max_l = time_label_uni.length;
+        var per_l = parseInt(max_l*0.90);
 
         var label = d3.select("#heatmap")
             .append("svg")
@@ -303,22 +331,22 @@ D3ライブラリで可視化する
             .append('text')
             .attr("font-family","Verdana")
             .attr("stroke","#000")
-            .attr('transform', 'translate(50,20)')
-            .text("閲覧時間(秒)");
+            .attr('transform', 'translate(50,15)')
+            .text("最大閲覧時間");
 
         d3.select('#label')
             .append('text')
             .attr("font-family","Verdana")
             .attr("stroke","#000")
-            .attr('transform', 'translate(50,35)')
-            .text(time_label_uni[time_label_uni.length-1]);
+            .attr('transform', 'translate(50,30)')
+            .text(function() {return showtime(time_label_uni[max_l-1])});
 
         d3.select('#label')
             .append('text')
             .attr("font-family","Verdana")
             .attr("stroke","#000")
             .attr('transform', 'translate(50,550)')
-            .text(time_label_uni[0]);
+            .text(function() {return showtime(time_label_uni[0])});
 
 
         label.selectAll('g')
@@ -389,14 +417,23 @@ D3ライブラリで可視化する
             };
             var mousemove = function (d) {
                 tooltip
-                    .html("<h4>" + d.page + "ページ目を閲覧した時間は: " + d.time + "s<br><strong></h4>"+
-                        "<img  src = \"" + img_url[d.page] + "\" width=\"384\" height=\"272\">")
+                    .html(function () {
+                        if(d.time>=time_label_uni[per_l] && d.time>=600){
+                            return "<h4>" + d.page + "ページ目を閲覧した時間は: " + showtime(d.time) + "<br><strong></h4>"+
+                                "<h5 style='color: red'>このページでブラウザを閉じた可能性があります。<br>その場合は実際の閲覧時間と違う可能性があります。</h5>"+
+                                "<img  src = \"" + img_url[d.page] + "\" width=\"384\" height=\"272\">"
+                        }
+                        return "<h4>" + d.page + "ページ目を閲覧した時間は: " + showtime(d.time) + "<br><strong></h4>"+
+                            "<img  src = \"" + img_url[d.page] + "\" width=\"384\" height=\"272\">";
+                    })
                     .style("left", (d3.mouse(this)[0] + 70) + "px")
                     .style("top", (d3.mouse(this)[1]) + "px")
             };
             var mouseleave = function (d) {
                 tooltip.style("opacity", 0)
             };
+
+            var max_time = time_label_uni[per_l];
 
             // add the squares
             svg.selectAll()
@@ -414,15 +451,36 @@ D3ライブラリで可視化する
                 .attr("width", x.bandwidth())
                 .attr("height", y.bandwidth())
                 .style("fill", function (d) {
-                    return myColor(d.time)
+                    if (d.time<time_label_uni[per_l]){
+                        return myColor(d.time/max_time*100)
+                    }
+                    else return "#00aaff"
                 })
                 .on("mouseover", mouseover)
                 .on("mousemove", mousemove)
                 .on("mouseleave", mouseleave)
         });
+        //     svg.selectAll()
+        //         .data(time_array, function (d) {
+        //             return d.id + ':' + d.page;
+        //         })
+        //         .enter()
+        //         .append("text")
+        //         .attr("x", function (d) {
+        //             return x(d.id)
+        //         })
+        //         .attr("y", function (d) {
+        //             return y(d.page)
+        //         })
+        //         .attr("dx", x.bandwidth()/3)
+        //         .attr("dy", y.bandwidth()/1.15)
+        //         .text(function (d) {
+        //             if (d.time>=time_label_uni[per_l]){return "外れ値";}})
+        // });
 
 
     }
+
 
 
 

@@ -89,17 +89,18 @@ POSTデータに対応するデータを受け取る機能
         $group_member_id = $_POST["group_member_id"];
         $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
 
+        $group_member_username = $_POST["group_member_username"];
+
         //id to name
 
         $result = array();
 
-        if (($handle = fopen("setting_csv/lti_list.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle))) {
-                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
-                $result[$data[1]] = $data[2];
-                }
-            }
-            fclose($handle);
+        $group_member_lmsuserid_l = explode(',', $group_member_lmsuserid);
+        $group_member_username_l = explode(',', $group_member_username);
+
+        for($i = 0; $i<count($group_member_lmsuserid_l);$i++){
+            $result[$group_member_lmsuserid_l[$i]]=$group_member_username_l[$i];
+        }
 
         $course_begin = array();
         $course_end = array();
@@ -185,6 +186,27 @@ POSTデータに対応するデータを受け取る機能
             $_SESSION["course_name"] = $course_name;
 
             $_SESSION["all"] = $_POST;
+
+            $userid_timestamp = array_keys($_POST);
+
+
+            //get discussion begin and end
+            $sp_index_begin = array_keys($userid_timestamp,"common_groupingid");
+            $sp_index_end = array_keys($userid_timestamp,"cqchat_name");
+
+
+            $timestamp_l = array();
+
+            for($i = $sp_index_begin[0] + 1; $i<$sp_index_end[0];$i++){
+                $tmp_ts_id = explode('_',$userid_timestamp[$i]);
+
+                $tmp_timestamp = $tmp_ts_id[count($tmp_ts_id)-1];
+                array_push($timestamp_l, $tmp_timestamp);
+            }
+
+            $_SESSION["dis_begin"] = date ( 'Y-m-d H:i:s' ,min($timestamp_l));
+            $_SESSION["dis_end"] = date ( 'Y-m-d H:i:s' ,max($timestamp_l));
+
         }else{
             echo "<script> alert(\"未登録\");</script>";
             $_SESSION = array();

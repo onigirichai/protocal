@@ -1,4 +1,7 @@
 <?php
+header("Cache-Control: no-cache, must-revalidate");
+?>
+<?php
 //Logincheck.phpと同じローカルの仮ユーザーログイン検証、
 //仮のCQCHATに集計されたmdl_cqchat_social_presence_pointのテーブルにアクセスし、ポイントを集計し、
 //ユーザーごとにJson形式（data/ユーザーID_discussion.json）に保存
@@ -49,20 +52,23 @@ foreach ($student_l as $st){
     $dis_st[$st] = array();
 }
 
-$userid_timestamp = array_keys($tmp_all);
+$all_keys = array_keys($tmp_all);
 
-$tmp = array_keys($userid_timestamp,"common_groupingid");
+//get sp index begin and end
+
+$sp_index_begin = array_keys($all_keys,"common_groupingid");
+$sp_index_end = array_keys($all_keys,"cqchat_name");
 
 $timestamp_l = array();
 
-for($i = $tmp[0] + 1; $i<count($tmp_all)-2;$i++){
-    $tmp_ts_id = explode('_',$userid_timestamp[$i]);
+for($i = $sp_index_begin[0] + 1; $i<$sp_index_end[0];$i++){
+    $tmp_ts_id = explode('_',$all_keys[$i]);
 
     $tmp_timestamp = $tmp_ts_id[count($tmp_ts_id)-1];
     array_push($timestamp_l, $tmp_timestamp);
 
     $tmp_member_id = $tmp_ts_id[count($tmp_ts_id)-2];
-    array_push($dis_st[$tmp_member_id], $tmp_timestamp.','.$tmp_all[$userid_timestamp[$i]]);
+    array_push($dis_st[$tmp_member_id], $tmp_timestamp.','.$tmp_all[$all_keys[$i]]);
 }
 
 $_SESSION["dis_begin"] = date ( 'Y-m-d H:i:s' ,min($timestamp_l));
