@@ -398,7 +398,7 @@ D3ライブラリで可視化する
 
         }
 
-        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+"_2020.csv").then(function (img_url) {
+        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+"_"+sessionStorage.getItem("context_label")+".csv").then(function (img_url) {
             // ツールキットを作成
             var tooltip = d3.select("#heatmap")
                 .append("div")

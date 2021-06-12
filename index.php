@@ -77,7 +77,7 @@ POSTデータに対応するデータを受け取る機能
 
     session_start();
     //POSTデータをセッションとして保存
-
+    //var_dump($_POST);
     if(isset($_POST["logined_cqchat_userid"])){
         $user_id = $_POST["logined_cqchat_userid"];
         $clicked_user_id = $_POST["clicked_cqchat_userid"];
@@ -90,6 +90,10 @@ POSTデータに対応するデータを受け取る機能
         $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
 
         $group_member_username = $_POST["group_member_username"];
+
+        //get course name
+        $context_label = substr($_POST["context_label"],0,4);
+
 
         //id to name
 
@@ -110,29 +114,29 @@ POSTデータに対応するデータを受け取る機能
         $dis_title = array();
         $cqchat_courseid = "";
 
-        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
-            while (($data = fgetcsv($handle))) {
-                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
-                $tmp = explode(',', $data[0]);
-                $course_name[$tmp[1]] = $tmp[0];
-                $dis_title[$tmp[1]] = $data[1];
-            }
-            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
-            $cqchat_courseid = $course_name[$tmp_key];
-        }
-        fclose($handle);
-
 //        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
 //            while (($data = fgetcsv($handle))) {
-//                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+//                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
 //                $tmp = explode(',', $data[0]);
-//                $course_name[$data[1]] = $data[0];
-//                $dis_title[$data[1]] = $data[2];
+//                $course_name[$tmp[1]] = $tmp[0];
+//                $dis_title[$tmp[1]] = $data[1];
 //            }
 //            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
 //            $cqchat_courseid = $course_name[$tmp_key];
 //        }
 //        fclose($handle);
+
+        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
+            while (($data = fgetcsv($handle))) {
+                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+                $tmp = explode(',', $data[0]);
+                $course_name[$data[1]] = $data[0];
+                $dis_title[$data[1]] = $data[2];
+            }
+            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
+            $cqchat_courseid = $course_name[$tmp_key];
+        }
+        fclose($handle);
 
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
@@ -184,13 +188,14 @@ POSTデータに対応するデータを受け取る機能
 
             $_SESSION["cqchat_name"] = $cqchat_name;
             $_SESSION["course_name"] = $course_name;
+            $_SESSION["context_label"] = $context_label;
 
             $_SESSION["all"] = $_POST;
 
             $userid_timestamp = array_keys($_POST);
 
 
-            //get discussion begin and end
+            //get discussion begin and end's index
             $sp_index_begin = array_keys($userid_timestamp,"common_groupingid");
             $sp_index_end = array_keys($userid_timestamp,"cqchat_name");
 
@@ -250,6 +255,7 @@ POSTデータに対応するデータを受け取る機能
     sessionStorage.setItem("course_begin","<?php echo $_SESSION["course_begin"]; ?>");
     sessionStorage.setItem("course_end","<?php echo $_SESSION["course_end"]; ?>");
     sessionStorage.setItem("cqchat_name", "<?php echo $_SESSION["cqchat_name"]; ?>");
+    sessionStorage.setItem("context_label", "<?php echo $_SESSION["context_label"]; ?>");
 
 
 
