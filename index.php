@@ -94,6 +94,37 @@ POSTデータに対応するデータを受け取る機能
 
         //get course name
         $context_label = substr($_POST["context_label"],0,4);
+        $created = $context_label.'-01-01';
+
+        $tmp_course_name = explode('・',$_POST["context_label"])[2];
+        $course_name = explode('（',$tmp_course_name)[0];
+
+/////////////////////////////////
+        //トンネルのセッティングにより、BookRollのデータベースにアクセス
+        $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
+        //$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+        $user_bookr = 'student2020';
+        $password_bookr = 'glib394sail';
+
+        try {
+            $dsn_bookr = new PDO($dsn_bookr, $user_bookr, $password_bookr);
+        } catch (PDOException $e) {
+            echo "接続失敗: " . $e->getMessage() . "\n";
+        } finally {
+            $course_list = array();
+
+            $select_course_list = <<<ss
+            SELECT title FROM bookroll.br_contents 
+            where teacher_name = '山田 政寛' and created > '$created' and title like '$course_name%'
+ss;
+            $result_page = $dsn_bookr->query($select_course_list);
+
+            foreach($result_page as $line){
+                $tt = $line['title'];
+                array_push($course_list, $tt);
+            }
+            $_SESSION["course_list"] = $course_list;
+        }
 
 
         //id to name

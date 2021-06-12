@@ -50,8 +50,8 @@ foreach ($student_l as $value){
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-//$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
-$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
 $user_bookr = 'student2020';
 $password_bookr = 'glib394sail';
 
