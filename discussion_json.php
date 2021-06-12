@@ -59,8 +59,6 @@ $all_keys = array_keys($tmp_all);
 $sp_index_begin = array_keys($all_keys,"common_groupingid");
 $sp_index_end = array_keys($all_keys,"cqchat_name");
 
-$timestamp_l = array();
-
 for($i = $sp_index_begin[0] + 1; $i<$sp_index_end[0];$i++){
     $tmp_ts_id = explode('_',$all_keys[$i]);
 
@@ -70,9 +68,6 @@ for($i = $sp_index_begin[0] + 1; $i<$sp_index_end[0];$i++){
     $tmp_member_id = $tmp_ts_id[count($tmp_ts_id)-2];
     array_push($dis_st[$tmp_member_id], $tmp_timestamp.','.$tmp_all[$all_keys[$i]]);
 }
-
-$_SESSION["dis_begin"] = date ( 'Y-m-d H:i:s' ,min($timestamp_l));
-$_SESSION["dis_end"] = date ( 'Y-m-d H:i:s' ,max($timestamp_l));
 
 $dis_l = array("emotion","humor","selfdisclosure","paralanguage","value","thread", "reference", "quoting", "question", "appreciation", "agreement", "disagreement", "advice","vocatives","inclusive","phatics","social_sharing","reflection");
 

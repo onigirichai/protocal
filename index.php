@@ -74,6 +74,7 @@ POSTデータに対応するデータを受け取る機能
 //?>
 
 <?php
+    date_default_timezone_set('Asia/tokyo');
 
     session_start();
     //POSTデータをセッションとして保存
@@ -114,29 +115,29 @@ POSTデータに対応するデータを受け取る機能
         $dis_title = array();
         $cqchat_courseid = "";
 
-//        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
-//            while (($data = fgetcsv($handle))) {
-//                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
-//                $tmp = explode(',', $data[0]);
-//                $course_name[$tmp[1]] = $tmp[0];
-//                $dis_title[$tmp[1]] = $data[1];
-//            }
-//            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
-//            $cqchat_courseid = $course_name[$tmp_key];
-//        }
-//        fclose($handle);
-
         if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
-                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+                $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
                 $tmp = explode(',', $data[0]);
-                $course_name[$data[1]] = $data[0];
-                $dis_title[$data[1]] = $data[2];
+                $course_name[$tmp[1]] = $tmp[0];
+                $dis_title[$tmp[1]] = $data[1];
             }
             $tmp_key = array_keys($dis_title, $cqchat_name)[0];
             $cqchat_courseid = $course_name[$tmp_key];
         }
         fclose($handle);
+
+//        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
+//            while (($data = fgetcsv($handle))) {
+//                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
+//                $tmp = explode(',', $data[0]);
+//                $course_name[$data[1]] = $data[0];
+//                $dis_title[$data[1]] = $data[2];
+//            }
+//            $tmp_key = array_keys($dis_title, $cqchat_name)[0];
+//            $cqchat_courseid = $course_name[$tmp_key];
+//        }
+//        fclose($handle);
 
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
