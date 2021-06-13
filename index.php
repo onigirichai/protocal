@@ -93,6 +93,7 @@ POSTデータに対応するデータを受け取る機能
         $group_member_username = $_POST["group_member_username"];
 
         //get course name
+        $context_label_full_name = $_POST["context_label"];
         $context_label = substr($_POST["context_label"],0,4);
         $created = $context_label.'-01-01';
 
@@ -111,7 +112,7 @@ POSTデータに対応するデータを受け取る機能
         } catch (PDOException $e) {
             echo "接続失敗: " . $e->getMessage() . "\n";
         } finally {
-            $course_list = array();
+            $course_list = "";
 
             $select_course_list = <<<ss
             SELECT title FROM bookroll.br_contents 
@@ -121,9 +122,10 @@ ss;
 
             foreach($result_page as $line){
                 $tt = $line['title'];
-                array_push($course_list, $tt);
+                $course_list.=($tt.',');
             }
             $_SESSION["course_list"] = $course_list;
+            file_put_contents('data/'.$context_label_full_name.'.txt', $course_list);
         }
 
 
@@ -221,6 +223,7 @@ ss;
             $_SESSION["cqchat_name"] = $cqchat_name;
             $_SESSION["course_name"] = $course_name;
             $_SESSION["context_label"] = $context_label;
+            $_SESSION["context_label_full_name"] = $context_label_full_name;
 
             $_SESSION["all"] = $_POST;
 
@@ -288,7 +291,7 @@ ss;
     sessionStorage.setItem("course_end","<?php echo $_SESSION["course_end"]; ?>");
     sessionStorage.setItem("cqchat_name", "<?php echo $_SESSION["cqchat_name"]; ?>");
     sessionStorage.setItem("context_label", "<?php echo $_SESSION["context_label"]; ?>");
-
+    sessionStorage.setItem("context_label_full_name", "<?php echo $_SESSION["context_label_full_name"]; ?>");
 
 
     // function getCSV() {

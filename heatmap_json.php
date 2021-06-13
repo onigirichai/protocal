@@ -27,6 +27,10 @@ $course_id = $_SESSION["cqchat_courseid"];
 $cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
 
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
+
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
+
 //get course year
 
 $context_label = $_SESSION["context_label"];
@@ -76,7 +80,7 @@ try {
     $select_cour_page = <<<ss
         SELECT * FROM bookroll.br_contents_file 
         left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title = '$course_id'
+        where bookroll.br_contents.title = '$course_name'
 ss;
     $result_page = $dsn_bookr->query($select_cour_page);
 //    foreach($result_page as $line){
@@ -111,7 +115,7 @@ ss;
     }
 
 
-    $filename = "setting_csv/".$course_id."_".intval($context_label).".csv";
+    $filename = "setting_csv/".$course_name."_".intval($context_label).".csv";
     if (! file_exists ( $filename )) {
         $f = fopen($filename, "w");
         foreach ($page_images as $line) {
@@ -128,7 +132,7 @@ ss;
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title = '$course_id' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
+        where bookroll.br_contents.title = '$course_name' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
 ss;
         $result = $dsn_bookr->query($select_cour_st);
 

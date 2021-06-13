@@ -29,6 +29,8 @@ $id_name = $_SESSION["result"] ;
 
 list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
+
 //ログ保存　"log/user_ud.csv"
 clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"behavior",$begin,$end);
 
@@ -71,7 +73,7 @@ try {
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 
-        where bookroll.br_contents.title = '$course_id' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
+        where bookroll.br_contents.title = '$course_name' AND bookroll.br_event_log.user_id = '$student_l[$i]@FE290BBB-CB35-A016-DE38-DE8E06D6D7A7'
 ss;
         $result = $dsn_bookr->query($select_cour_st);
 

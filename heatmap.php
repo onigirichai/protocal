@@ -58,16 +58,19 @@ D3ライブラリで可視化する
 <h3 style="margin-left: 30px; margin-top: 10px">グループメンバーのスライドの閲覧時間と比較し、<br>次のディスカッションを進ませるようにスライドを読みましょう！</h3>
 
 <form style="margin-left: 30px">
+    <label for="course_pick">教材選択：　</label>
+    <!--    <input type="text" id="course_pick" style="color: red" autocomplete="off"><br>-->
+    <select  name = "name" id="course_pick"  autocomplete="off"></select><br>
+
     <label for="datepicker_begin">期間選択：　</label>
-    <label for="datepicker_begin">始まり</label>
-    <input type="text" id="datepicker_begin" style="color: red" autocomplete="off">
-    <label for="datepicker_end">終わり</label>
-    <input type="text" id="datepicker_end" style="color: red" autocomplete="off">
+    <input type="text" id="datepicker_begin"  autocomplete="off">
+    <label for="datepicker_end">~</label>
+    <input type="text" id="datepicker_end"  autocomplete="off">
     <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
 
-<h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は該当授業の前の一週間</strong></h5>
-<h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択し、両日付が赤くなると検索してください</h5>
+<h5 style="margin-left: 30px; margin-top: 10px"><strong>*最初の日付は該当授業の前の一週間</strong></h5>
+<h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択してください</h5>
 
 <img style="margin-left: 30px" src='images/notification.png' alt='notification'>
 
@@ -92,7 +95,16 @@ D3ライブラリで可視化する
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
         var st = sessionStorage.getItem("name_st");
-        var course = sessionStorage.getItem("cqchat_courseid");
+
+        //select course
+        var course = "";
+        if (sessionStorage.getItem("course_pick")){
+            course = sessionStorage.getItem("course_pick");
+        }else{
+            course = sessionStorage.getItem("cqchat_courseid");
+        }
+        sessionStorage.setItem("course",course);
+
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
@@ -112,7 +124,8 @@ D3ライブラリで可視化する
             url:'heatmap_json.php',
             data:{
                 begin: begin,
-                end: end
+                end: end,
+                course_pick:sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid")
             },
             dataType:'text',
             success: function (StuStatus) {
@@ -150,19 +163,56 @@ D3ライブラリで可視化する
 
     function select_time(){
         //カレンダーの日付を選択し、ローカルストレージ
+        var course_pick = $("#course_pick").val();
         var begin = $("#datepicker_begin").val();
         var end = $("#datepicker_end").val();
         sessionStorage.setItem("datepicker_begin",begin);
         sessionStorage.setItem("datepicker_end",end);
+        sessionStorage.setItem("course_pick",course_pick);
+
         load_page();
         location.reload();
     }
 
+    //get array of course list and create selected list
+    function getTxt(URL) {
+        return new Promise(function (resolve) {
+            req = new XMLHttpRequest();
+            req.open("get", URL,true);
+
+            req.onload = function () {
+                resolve(req.responseText)
+            };
+            req.onerror = function () {
+                console.log("error");
+            };
+
+            req.send(null);
+        })
+
+    }
+
+    var select = document.getElementById("course_pick");
+
+    getTxt('data/'+sessionStorage.getItem("context_label_full_name")+'.txt').then(function (result) {
+
+        course_l = result.split(",")
+        console.log(course_l);
+
+        for (i = 0; i<course_l.length-2;i++){
+            var option = document.createElement("option");
+            option.text = course_l[i];
+            option.value = course_l[i];
+            select.appendChild(option);
+        }
+    });
+
     $( "#datepicker_begin" ).datepicker();
     $( "#datepicker_end" ).datepicker();
 
-    $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"));
-    $("#datepicker_end").attr("placeholder",sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"));
+    $("#course_pick").attr("value",sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid"));
+    $("#datepicker_begin").attr("value",sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"));
+    $("#datepicker_end").attr("value",sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"));
 
     function load_data() {
         var st = sessionStorage.getItem("logined_lms_userid");
@@ -398,7 +448,7 @@ D3ライブラリで可視化する
 
         }
 
-        getCSV("setting_csv/"+sessionStorage.getItem("cqchat_courseid")+"_"+sessionStorage.getItem("context_label")+".csv").then(function (img_url) {
+        getCSV("setting_csv/"+sessionStorage.getItem("course")+"_"+sessionStorage.getItem("context_label")+".csv").then(function (img_url) {
             // ツールキットを作成
             var tooltip = d3.select("#heatmap")
                 .append("div")

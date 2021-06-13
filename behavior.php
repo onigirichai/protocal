@@ -56,16 +56,19 @@ D3ライブラリで可視化するaaaaaaa
 <h3 style="margin-left: 30px; margin-top: 10px">グループメンバーの事前学習活動と比較し、<br>次のディスカッションを進ませるようにBookRollの機能を使いましょう！</h3>
 
 <form style="margin-left: 30px">
+    <label for="course_pick">教材選択：　</label>
+<!--    <input type="text" id="course_pick" style="color: red" autocomplete="off"><br>-->
+    <select  name = "name" id="course_pick"  autocomplete="off"></select><br>
+
     <label for="datepicker_begin">期間選択：　</label>
-    <label for="datepicker_begin">始まり</label>
-    <input type="text" id="datepicker_begin" style="color: red" autocomplete="off">
-    <label for="datepicker_end">終わり</label>
-    <input type="text" id="datepicker_end" style="color: red" autocomplete="off">
+    <input type="text" id="datepicker_begin"  autocomplete="off">
+    <label for="datepicker_end">~</label>
+    <input type="text" id="datepicker_end"  autocomplete="off">
     <button type="button" class="btn btn-light" onclick="select_time()">検索</button>
 </form>
 
-<h5 style="margin-left: 30px; margin-top: 10px"><strong>*灰色の日付は該当授業の前の一週間</strong></h5>
-<h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択し、両日付が赤くなると検索してください</h5>
+<h5 style="margin-left: 30px; margin-top: 10px"><strong>*最初の日付は該当授業の前の一週間</strong></h5>
+<h5 style="margin-left: 30px; margin-top: 10px">もし他の時間期間に対応する情報を見たい場合は、カレンダーから選択してください</h5>
 
 <img style="margin-left: 30px" src='images/notification.png' alt='notification'>
 
@@ -89,7 +92,15 @@ D3ライブラリで可視化するaaaaaaa
     function load_page() {
         //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
         var st = sessionStorage.getItem("name_st");
-        var course = sessionStorage.getItem("cqchat_courseid");
+
+        //select course
+        var course = "";
+        if (sessionStorage.getItem("course_pick")){
+            course = sessionStorage.getItem("course_pick");
+        }else{
+            course = sessionStorage.getItem("cqchat_courseid");
+        }
+
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
@@ -104,13 +115,13 @@ D3ライブラリで可視化するaaaaaaa
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }
 
-
         $.ajax({
             method:'POST',
             url:'behavior_json.php',
             data:{
                 begin: begin,
-                end: end
+                end: end,
+                course_pick:sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid")
             },
             dataType:'text',
             //FIXME：ブックエンドにログイン状態以外の情報があれば、ログイン不可能
@@ -134,6 +145,7 @@ D3ライブラリで可視化するaaaaaaa
             method:'POST',
             url:'exit_log.php',
             data:{
+                course_pick:sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid"),
                 begin:sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"),
                 end:sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end")
             },
@@ -145,19 +157,59 @@ D3ライブラリで可視化するaaaaaaa
 
     function select_time(){
         //カレンダーの日付を選択し、ローカルストレージ
+        var course_pick = $("#course_pick").val();
         var begin = $("#datepicker_begin").val();
         var end = $("#datepicker_end").val();
         sessionStorage.setItem("datepicker_begin",begin);
         sessionStorage.setItem("datepicker_end",end);
+        sessionStorage.setItem("course_pick",course_pick);
+
         load_page();
         location.reload();
     }
 
+    //get array of course list and create selected list
+    function getTxt(URL) {
+        return new Promise(function (resolve) {
+            req = new XMLHttpRequest();
+            req.open("get", URL,true);
+
+            req.onload = function () {
+                resolve(req.responseText)
+            };
+            req.onerror = function () {
+                console.log("error");
+            };
+
+            req.send(null);
+        })
+
+    }
+
+    var select = document.getElementById("course_pick");
+
+    getTxt('data/'+sessionStorage.getItem("context_label_full_name")+'.txt').then(function (result) {
+
+        course_l = result.split(",")
+        console.log(course_l);
+
+        for (i = 0; i<course_l.length-2;i++){
+            var option = document.createElement("option");
+            option.text = course_l[i];
+            option.value = course_l[i];
+            select.appendChild(option);
+        }
+    });
+
+
 
     $( "#datepicker_begin" ).datepicker();
     $( "#datepicker_end" ).datepicker();
-    $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"));
-    $("#datepicker_end").attr("placeholder",sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"));
+
+    $("#course_pick").attr("value",sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid"));
+    $("#datepicker_begin").attr("value",sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"));
+    $("#datepicker_end").attr("value",sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"));
+
 
 
 
