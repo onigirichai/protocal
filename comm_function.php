@@ -90,7 +90,7 @@ function get_os($agent) {
 }
 
 //クライアントのログデータ記録
-function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$page, $begin, $end) {
+function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$page, $begin, $end, $function) {
     $useragent = $_SERVER ['HTTP_USER_AGENT'];
     $clientip = $_SERVER ['REMOTE_ADDR'];
 
@@ -114,11 +114,12 @@ function clientlog($student_id, $group_id,$cqchat_id,$course_id,$group_member,$p
     array_push($data, date ( 'Y-m-d H:i:s' ,$end));
     array_push($data, $begin);
     array_push($data, $end);
+    array_push($data, $function);
 
-    $filename = "log/".$student_id.".csv";
+    $filename = "log/2021/".$student_id.".csv";
     if (! file_exists ( $filename )) {
         $f = fopen ( $filename, "w+" );
-        fputcsv($f, ["user_id","group_id","cqchat_id","course_id","group_member","useragent", "clientip", "os", "time", "page", "course_begin", "course_end","course_begin_timestamp","course_begin_timestamp"]);
+        fputcsv($f, ["user_id","group_id","cqchat_id","course_id","group_member","useragent", "clientip", "os", "time", "page", "course_begin", "course_end","course_begin_timestamp","course_begin_timestamp","function"]);
         fputcsv($f, $data);
         fclose($f);
     }else{

@@ -146,8 +146,9 @@ D3ライブラリで可視化する
             method:'POST',
             url:'exit_log.php',
             data:{
-                begin:sessionStorage.getItem("course_begin"),
-                end:sessionStorage.getItem("course_end")
+                begin:sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"),
+                end:sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"),
+                function: sessionStorage.getItem("function")
             },
             dataType:'text',
             success: function (StuStatus) {}

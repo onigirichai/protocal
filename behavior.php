@@ -104,6 +104,10 @@ D3ライブラリで可視化するaaaaaaa
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
+        if(!sessionStorage.getItem("function")){
+            sessionStorage.setItem("function","read");
+        }
+
         $("#st-status").html(st);
         $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
         if(begin && end){
@@ -121,6 +125,7 @@ D3ライブラリで可視化するaaaaaaa
             data:{
                 begin: begin,
                 end: end,
+                function: sessionStorage.getItem("function"),
                 course_pick:sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid")
             },
             dataType:'text',
@@ -140,17 +145,20 @@ D3ライブラリで可視化するaaaaaaa
     }
 
     //ページを閉じる際のログ記録
-    window.onbeforeunload = function () {
+    window.onbeforeunload = function exit_page () {
         $.ajax({
             method:'POST',
             url:'exit_log.php',
             data:{
                 course_pick:sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid"),
+                function: sessionStorage.getItem("function"),
                 begin:sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"),
                 end:sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end")
             },
             dataType:'text',
-            success: function (StuStatus) {}
+            success: function (StuStatus) {
+                sessionStorage.setItem("function","read");
+            }
         })
     };
 
@@ -163,9 +171,11 @@ D3ライブラリで可視化するaaaaaaa
         sessionStorage.setItem("datepicker_begin",begin);
         sessionStorage.setItem("datepicker_end",end);
         sessionStorage.setItem("course_pick",course_pick);
+        //function log
+        sessionStorage.setItem("function","search");
 
         load_page();
-        location.reload();
+        // location.reload();
     }
 
     //get array of course list and create selected list
@@ -362,6 +372,5 @@ D3ライブラリで可視化するaaaaaaa
 
 
     }
-
 
 </script>

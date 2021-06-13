@@ -12,7 +12,8 @@ $group_id = $_SESSION["groupid"];
 $course_id = $_SESSION["cqchat_courseid"];
 $cqchat_id = $_SESSION["cqchat_id"];
 $id_name = $_SESSION["result"] ;
-
+$function = $_POST['function'];
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
 
 if($_POST['begin']){
     $begin = $_POST['begin'];
@@ -27,5 +28,6 @@ if($_POST['end']){
     $end = time();
 }
 
+
 //ログ保存　"log/user_ud.csv"
-clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"exit",$begin,$end);
+clientlog($student, $group_id,$cqchat_id,$course_name,$group_member,"exit",$begin,$end,$function);

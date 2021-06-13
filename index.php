@@ -116,15 +116,26 @@ POSTデータに対応するデータを受け取る機能
 
             $select_course_list = <<<ss
             SELECT title FROM bookroll.br_contents 
-            where teacher_name = '山田 政寛' and created > '$created' and title like '$course_name%'
+            where teacher_name = '山田 政寛' and created > '$created' and title like '$course_name%回'
 ss;
             $result_page = $dsn_bookr->query($select_course_list);
+            $N = $result_page->rowCount();
+            $course_list_arr = array();
+            for($i = 1; $i<=$N; $i++){
+                $course_list_arr[i] = " ";
+            }
 
             foreach($result_page as $line){
-                $tt = $line['title'];
-                $course_list.=($tt.',');
+                $tt = substr($line['title'], -4,1);
+                $course_list_arr[$tt] = $line['title'];
             }
-            $_SESSION["course_list"] = $course_list;
+            for($i = 1; $i<=$N; $i++){
+                if ($course_list_arr[$i]){
+                    $course_list.=$course_list_arr[$i].',';
+                }
+            }
+
+
             file_put_contents('data/'.$context_label_full_name.'.txt', $course_list);
         }
 

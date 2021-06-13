@@ -30,9 +30,10 @@ $id_name = $_SESSION["result"] ;
 list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 $course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
+$function = $_POST['function'];
 
 //ログ保存　"log/user_ud.csv"
-clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"behavior",$begin,$end);
+clientlog($student, $group_id,$cqchat_id,$course_name,$group_member,"behavior",$begin,$end,$function);
 
 $student_l = array();
 

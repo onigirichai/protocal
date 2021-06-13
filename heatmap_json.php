@@ -38,8 +38,10 @@ $context_label = $_SESSION["context_label"];
 
 list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
+$function = $_POST['function'];
+
 //ログ保存　"log/user_ud.csv"
-clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"heatmap",$begin,$end);
+clientlog($student, $group_id,$cqchat_id,$course_name,$group_member,"heatmap",$begin,$end,$function);
 
 $student_l = array();
 

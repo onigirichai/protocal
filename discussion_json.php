@@ -28,7 +28,7 @@ $tmp_all = $_SESSION["all"];
 list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 //ログ保存　"log/user_ud.csv"
-clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"discussion",$begin,$end);
+clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"discussion",$begin,$end,"read");
 
 //$dsn = 'mysql:dbname=bagujo;host=127.0.0.1;port=3306';
 //$dbuser = 'onigiri';
