@@ -1,5 +1,5 @@
 <!--
-仮のCQCHATからのデータを受け取る
+仮のCQCHATからのデータを送信
 -->
 <!DOCTYPE html>
 <html lang="ja">
@@ -20,6 +20,24 @@
 </body>
 </html>
 
+<!--
+データの通信
+logined_cqchat_userid：ログインしたユーザーのCqchatのID
+clicked_cqchat_userid：クリックされたユーザーのCqchatのID
+logined_lms_userid：ログインしたユーザーのBookRollのID
+clicked_lms_userid：クリックされたユーザーのBookRollのID
+cqchat_id：
+groupid：ランダムに付与されたグループのID
+group_member_id：グループメンバーのCqchatのID
+group_member_lmsuserid：グループメンバーのBookRollのID
+common_groupingid
+social_presence_points_data_[lms_userid]_[timestamp]：社会的存在感、認知的存在感の発言分類結果
+cqchat_name：議論のテーマ
+lms_courseid
+group_member_username_[lms_userid]：グループメンバーの名前
+message_context_[lms_userid]_[timestamp]：発言の内容
+context_label：コース名
+-->
 <script type="text/javascript">
     function test() {
         $.ajax({
@@ -44,7 +62,10 @@
                 social_presence_points_data_398_1594361975:"0,0,0,1,0,1,0,1,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0",
                 cqchat_name: "テストチャット",
                 lms_courseid:"2", //new
-                group_member_username:"コウ,徐,陳,フウ",
+                group_member_username_231:"コウ",
+                group_member_username_398:"徐",
+                group_member_username_755:"陳",
+                group_member_username_3453:"フウ",
                 message_context_231_1594361979:"えええ",
                 message_context_398_1594361975:"へへへ",
                 lti_authenticated:"true",

@@ -90,9 +90,9 @@ POSTデータに対応するデータを受け取る機能
         $group_member_id = $_POST["group_member_id"];
         $group_member_lmsuserid = $_POST["group_member_lmsuserid"];
 
-        $group_member_username = $_POST["group_member_username"];
+        //$group_member_username = $_POST["group_member_username"];
 
-        //get course name
+        //コース名の保存、年の保存
         $context_label_full_name = $_POST["context_label"];
         $context_label = substr($_POST["context_label"],0,4);
         $created = $context_label.'-01-01';
@@ -102,8 +102,8 @@ POSTデータに対応するデータを受け取る機能
 
 /////////////////////////////////
         //トンネルのセッティングにより、BookRollのデータベースにアクセス
-        $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
-        //$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+        $dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';//ローカルでのテスト
+//        $dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';//サーバー上
         $user_bookr = 'student2020';
         $password_bookr = 'glib394sail';
 
@@ -114,6 +114,7 @@ POSTデータに対応するデータを受け取る機能
         } finally {
             $course_list = "";
 
+            //BookRollのデータベースで検索、コース名にあるすべてのスライド名を獲得
             $select_course_list = <<<ss
             SELECT title FROM bookroll.br_contents 
             where teacher_name = '山田 政寛' and created > '$created' and title like '$course_name%回'
@@ -135,20 +136,19 @@ ss;
                 }
             }
 
-
+            //コース名にあるすべてのスライド名のリストの保存
             file_put_contents('data/'.$context_label_full_name.'.txt', $course_list);
         }
 
 
-        //id to name
-
+        //BookRollのIDと受講者の実名の紐づけ
         $result = array();
 
         $group_member_lmsuserid_l = explode(',', $group_member_lmsuserid);
-        $group_member_username_l = explode(',', $group_member_username);
+//        $group_member_username_l = explode(',', $group_member_username);
 
         for($i = 0; $i<count($group_member_lmsuserid_l);$i++){
-            $result[$group_member_lmsuserid_l[$i]]=$group_member_username_l[$i];
+            $result[$group_member_lmsuserid_l[$i]]=$_POST["group_member_username_".$group_member_lmsuserid_l[$i]];
         }
 
         $course_begin = array();
@@ -159,6 +159,7 @@ ss;
         $dis_title = array();
         $cqchat_courseid = "";
 
+        //スライドと議論のテーマとの紐づけ、ローカルでのテスト
         if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
                 $data[1] = str_replace(["\r\n", "\r", "\n"], '', $data[1]);
@@ -171,6 +172,7 @@ ss;
         }
         fclose($handle);
 
+        //スライドと議論のテーマとの紐づけ、サーバー上のソースコード
 //        if (($handle = fopen("setting_csv/course_name.csv", "r")) !== FALSE) {
 //            while (($data = fgetcsv($handle))) {
 //                $data[2] = str_replace(["\r\n", "\r", "\n"], '', $data[2]);
@@ -183,6 +185,7 @@ ss;
 //        }
 //        fclose($handle);
 
+        //スライドに関する授業の期間とスライドとの紐づけ
         if (($handle = fopen("setting_csv/course_time.csv", "r")) !== FALSE) {
             while (($data = fgetcsv($handle))) {
 
@@ -214,7 +217,7 @@ ss;
             }
         }
 
-
+        //_SESSIONへの貯蔵
         if (array_key_exists($clicked_user_lmsid, $result)){
             $_SESSION["clicked_lms_username"] = $result[$clicked_user_lmsid];
             $_SESSION["logined_cqchat_userid"] = $user_id;
@@ -275,20 +278,18 @@ ss;
 <script type="text/javascript">
 
     function load_page() {
+        name_st = "<?php echo $_SESSION["clicked_lms_username"]; ?>";//クリックされた受講者の実名
+        course = sessionStorage.getItem("cqchat_courseid");//スライドの名前
+        groupid = "<?php echo $_SESSION["group_member_id_list"]; ?>";//グループのID
 
-        name_st = "<?php echo $_SESSION["clicked_lms_username"]; ?>";
-        course = sessionStorage.getItem("cqchat_courseid");
-        groupid = "<?php echo $_SESSION["group_member_id_list"]; ?>";
-
-        // $("#st-status").html(st);
-        // $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ ' ' +　st);
+        //アイコン
         $("#st-status").html(name_st);
         $("#user_id").html("<img src='images/user_icon.png' alt= 'user_icon'>"　+ '  ' +　name_st);
         $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
         $("#group_id").html("<img src='images/group_icon.png' alt= 'group_icon'>" + groupid);
     }
 
-    console.log("<?php echo $_SESSION["cqchat_name"]; ?>");
+    //_SESSIONにあるデータをsessionStorageに保存
     sessionStorage.setItem("logined_cqchat_userid",<?php echo $_SESSION["logined_cqchat_userid"]; ?>);
     sessionStorage.setItem("clicked_cqchat_userid",<?php echo $_SESSION["clicked_cqchat_userid"]; ?>);
     sessionStorage.setItem("logined_lms_userid",<?php echo $_SESSION["logined_lms_userid"]; ?>);
@@ -303,38 +304,6 @@ ss;
     sessionStorage.setItem("cqchat_name", "<?php echo $_SESSION["cqchat_name"]; ?>");
     sessionStorage.setItem("context_label", "<?php echo $_SESSION["context_label"]; ?>");
     sessionStorage.setItem("context_label_full_name", "<?php echo $_SESSION["context_label_full_name"]; ?>");
-
-
-    // function getCSV() {
-    //     return new Promise(function (resolve) {
-    //         req = new XMLHttpRequest();
-    //         req.open("get", "data/lti_list.csv",true);
-    //
-    //
-    //         req.onload = function () {
-    //             lti_dict = convertCSVtoDict(req.responseText);
-    //             resolve(lti_dict)
-    //         };
-    //         req.onerror = function () {
-    //             console.log("error");
-    //         };
-    //
-    //         req.send(null);
-    //     })
-    //
-    // }
-    //
-    // function convertCSVtoDict(str) {
-    //     result = {};
-    //     tmp = str.split("\n");
-    //     for(i=0;i<tmp.length;++i){
-    //         tmp_list = tmp[i].split(',');
-    //         result[tmp_list[1]] = tmp_list[2]
-    //     }
-    //
-    //     return result;
-    //
-    // }
 </script>
 
 

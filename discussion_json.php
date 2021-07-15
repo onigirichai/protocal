@@ -17,22 +17,18 @@ session_start();
 
 
 
-$student = $_SESSION["logined_lms_userid"];
-$group_member = $_SESSION["group_member_lmsuserid"];
-$group_id = $_SESSION["groupid"];
-$course_id = $_SESSION["cqchat_courseid"];
+$student = $_SESSION["logined_lms_userid"];//ユーザーID
+$group_member = $_SESSION["group_member_lmsuserid"];//グループメンバーのID
+$group_id = $_SESSION["groupid"];//グループのID
+$course_id = $_SESSION["cqchat_courseid"];//グループのID
 $cqchat_id = $_SESSION["cqchat_id"];
-$id_name = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;//実名とBookRollのIDの配列
 $tmp_all = $_SESSION["all"];
 
 list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
 
 //ログ保存　"log/user_ud.csv"
 clientlog($student, $group_id,$cqchat_id,$course_id,$group_member,"discussion",$begin,$end,"read");
-
-//$dsn = 'mysql:dbname=bagujo;host=127.0.0.1;port=3306';
-//$dbuser = 'onigiri';
-//$dbpassword = 'angelfantuan';
 
 $student_l = array();
 

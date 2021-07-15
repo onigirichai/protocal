@@ -54,13 +54,6 @@ D3ライブラリで可視化する
 </div>
 
 <h3 style="margin-left: 30px; margin-top: 10px"><strong>グループメンバーの参加度と比較しましょう！</strong></h3>
-<!--<form style="margin-left: 30px">-->
-<!--    <label for="datepicker_begin">始まり</label>-->
-<!--    <input type="text" id="datepicker_begin" style="color: red" autocomplete="off">-->
-<!--    <label for="datepicker_end">終わり</label>-->
-<!--    <input type="text" id="datepicker_end" style="color: red" autocomplete="off">-->
-<!--    <button type="button" class="btn btn-light" onclick="select_time()">検索</button>-->
-<!--</form>-->
 
 <h5 style="margin-left: 30px; margin-top: 10px"><strong>*参加度</strong>とはディスカッションによる発言分類の結果となります（詳細は扇形にカーソルを当てることにて）。</h5>
 
@@ -84,7 +77,6 @@ D3ライブラリで可視化する
     //ユーザーID、カレンダーで選択した始まり時間と終わり時間をPOSTで送信
     function load_page() {
         var st = sessionStorage.getItem("name_st");
-        // var course = sessionStorage.getItem("cqchat_courseid");
         var begin = sessionStorage.getItem("course_begin");
         var end = sessionStorage.getItem("course_end");
         var cqchat_name = sessionStorage.getItem("cqchat_name");
@@ -103,6 +95,7 @@ D3ライブラリで可視化する
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　dis_begin + '～'　+ dis_end);
         }
 
+        //カレンダーで選択した始まり時間と終わり時間をPOSTで送信
         $.ajax({
             method:'POST',
             url:'discussion_json.php',
@@ -164,12 +157,6 @@ D3ライブラリで可視化する
         load_page();
         location.reload();
     }
-
-    // $( "#datepicker_begin" ).datepicker();
-    // $( "#datepicker_end" ).datepicker();
-    //
-    // $("#datepicker_begin").attr("placeholder",sessionStorage.getItem("course_begin"));
-    // $("#datepicker_end").attr("placeholder",sessionStorage.getItem("course_end"));
 
     function draw(){
         var st = sessionStorage.getItem("logined_lms_userid");

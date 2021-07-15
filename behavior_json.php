@@ -5,11 +5,6 @@
 
 date_default_timezone_set('Asia/tokyo');
 
-//TODO：BookRollのデータベースにSSHトンネル立てるクラス、現在利用なし、
-//原因；BookRollのデータベースにアクセスするには、コマンドで実行する以後、Passphraseを入力する2つのステップが必要、
-//LinuxでBatコマンドで実行する可能が、PHPのexecの関数で実行不可能
-
-//代替：ターミナルでSSHトンネル作成のコマンド入力、BookRollのデータベースにアクセス
 require_once 'comm_function.php';
 
 //Jsonの形式でデータ保存のクラス
@@ -19,20 +14,19 @@ class JsonObject{
 
 session_start();
 
-//POSTでユーザーID,始まり時間と終わり時間を獲得
-$student = $_SESSION["logined_lms_userid"];
-$group_member = $_SESSION["group_member_lmsuserid"];
-$group_id = $_SESSION["groupid"];
-$course_id = $_SESSION["cqchat_courseid"];
+$student = $_SESSION["logined_lms_userid"];//ユーザーID
+$group_member = $_SESSION["group_member_lmsuserid"];//グループメンバーのID
+$group_id = $_SESSION["groupid"];//グループのID
+$course_id = $_SESSION["cqchat_courseid"];//グループのID
 $cqchat_id = $_SESSION["cqchat_id"];
-$id_name = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;//実名とBookRollのIDの配列
 
-list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);//検索の始まり時間と終わり時間
 
-$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;//スライドの名前
 $function = $_POST['function'];
 
-//ログ保存　"log/user_ud.csv"
+//ログ保存　"behavior"という引数を"clientlog"という関数で引き出し
 clientlog($student, $group_id,$cqchat_id,$course_name,$group_member,"behavior",$begin,$end,$function);
 
 $student_l = array();
@@ -48,8 +42,8 @@ foreach ($student_l as $value){
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
-//$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';　//ローカルでのテスト用
+$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';//サーバー上
 $user_bookr = 'student2020';
 $password_bookr = 'glib394sail';
 
@@ -66,11 +60,9 @@ try {
 
 
     for ($i = 0; $i < count($student_l); $i++){
-//        $timestamp = array();
         $operation = array();
 
-        //TODO：ユーザーIDごとにoperationを検索するSQLコマンド、
-        //%課題協学第1回%はテスト用、コース名を表す変数に変更
+        //BookRollのデータベースで認知的学習活動を検索、集計
         $select_cour_st = <<<ss
         SELECT * FROM bookroll.br_event_log 
         left join bookroll.br_contents on bookroll.br_event_log.contents_id = bookroll.br_contents.contents_id 

@@ -5,11 +5,6 @@
 
 date_default_timezone_set('Asia/tokyo');
 
-//TODO：BookRollのデータベースにSSHトンネル立てるクラス、現在利用なし、
-//原因；BookRollのデータベースにアクセスするには、コマンドで実行する以後、Passphraseを入力する2つのステップが必要、
-//LinuxでBatコマンドで実行する可能が、PHPのexecの関数で実行不可能
-
-//代替：ターミナルでSSHトンネル作成のコマンド入力、BookRollのデータベースにアクセス
 require_once "comm_function.php";
 
 //Jsonの形式でデータ保存のクラス
@@ -19,28 +14,23 @@ class JsonObject
 }
 session_start();
 
-//POSTでユーザーID,始まり時間と終わり時間を獲得
-$student = $_SESSION["logined_lms_userid"];
-$group_member = $_SESSION["group_member_lmsuserid"];
-$group_id = $_SESSION["groupid"];
-$course_id = $_SESSION["cqchat_courseid"];
+$student = $_SESSION["logined_lms_userid"];//ユーザーID
+$group_member = $_SESSION["group_member_lmsuserid"];//グループメンバーのID
+$group_id = $_SESSION["groupid"];//グループのID
+$course_id = $_SESSION["cqchat_courseid"];//グループのID
 $cqchat_id = $_SESSION["cqchat_id"];
-$id_name = $_SESSION["result"] ;
+$id_name = $_SESSION["result"] ;//実名とBookRollのIDの配列
 
-list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
+list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);//検索の始まり時間と終わり時間
 
-$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
-
-//get course year
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;//スライドの名前
 
 $context_label = $_SESSION["context_label"];
 
 
-list($begin, $end) = get_begin_end($_POST['begin'], $_POST['end']);
-
 $function = $_POST['function'];
 
-//ログ保存　"log/user_ud.csv"
+//ログ保存　"behavior"という引数を"clientlog"という関数で引き出し
 clientlog($student, $group_id,$cqchat_id,$course_name,$group_member,"heatmap",$begin,$end,$function);
 
 $student_l = array();
@@ -56,8 +46,8 @@ foreach ($student_l as $value){
 echo "success";
 
 //トンネルのセッティングにより、BookRollのデータベースにアクセス
-$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';
-//$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';
+//$dsn_bookr = 'mysql:dbname=bookroll;host=127.0.0.1;port=3307;charset=utf8';　//ローカルでのテスト用
+$dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306;charset=utf8';//サーバー上
 $user_bookr = 'student2020';
 $password_bookr = 'glib394sail';
 
@@ -68,30 +58,21 @@ try {
 } finally {
 
     $jsonString = new JsonObject();
-    //TODO：テスト用の'1'を修正
     $jsonString->id = 'グループ '. $group_id;    //change $_POST
     $jsonString->children = array();
 
-    // Collect pages from the material
+    //どちらのバージョンを選択、ページ数を設定
     $page_images = array();
     $page_no = 0;
     $version = '';
     $viewer_url = '';
 
-//    $page_markers = array();
     $select_cour_page = <<<ss
         SELECT * FROM bookroll.br_contents_file 
         left join bookroll.br_contents on bookroll.br_contents_file.contents_id = bookroll.br_contents.contents_id 
         where bookroll.br_contents.title = '$course_name'
 ss;
     $result_page = $dsn_bookr->query($select_cour_page);
-//    foreach($result_page as $line){
-//        $time = $line['created'];
-//        $tt = $line['title'];
-//        $page_no = $line['page'];
-//        $version = $line['version'];
-//        $viewer_url = $line['viewer_url'];
-//    }
 
     $dateb_tmp = $context_label."-01-01 00:00:00";
     $end_year = (string)(intval($context_label)+1);

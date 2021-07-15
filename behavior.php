@@ -104,12 +104,15 @@ D3ライブラリで可視化するaaaaaaa
         var begin = sessionStorage.getItem("datepicker_begin");
         var end = sessionStorage.getItem("datepicker_end");
 
+        //readかsearchという引数
         if(!sessionStorage.getItem("function")){
             sessionStorage.setItem("function","read");
         }
 
-        $("#st-status").html(st);
-        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);
+        $("#st-status").html(st);//クリックされた受講者の実名
+        $("#course_id").html("<img src='images/course_icon.png' alt= 'course_icon'>"　+ '  ' +　course);//スライド名
+
+        //BeginとEndが設定されていない場合は、そのまま初期の期間を使用
         if(begin && end){
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }else {
@@ -119,6 +122,7 @@ D3ライブラリで可視化するaaaaaaa
             $("#time_zone").html("<img src='images/time_icon.png' alt= 'course_icon'>"　+ '  ' +　begin + '～'　+ end);
         }
 
+        //選択された期間に関するBeginとEnd,Function（searchかread）,スライドの名を送信
         $.ajax({
             method:'POST',
             url:'behavior_json.php',
@@ -175,10 +179,10 @@ D3ライブラリで可視化するaaaaaaa
         sessionStorage.setItem("function","search");
 
         load_page();
-        // location.reload();
+        location.reload();
     }
 
-    //get array of course list and create selected list
+    //コースにあるすべてのスライドの選択リストを作成
     function getTxt(URL) {
         return new Promise(function (resolve) {
             req = new XMLHttpRequest();
@@ -203,7 +207,7 @@ D3ライブラリで可視化するaaaaaaa
         course_l = result.split(",")
         console.log(course_l);
 
-        for (i = 0; i<course_l.length-2;i++){
+        for (i = 0; i<course_l.length-1;i++){
             var option = document.createElement("option");
             option.text = course_l[i];
             option.value = course_l[i];
@@ -216,6 +220,7 @@ D3ライブラリで可視化するaaaaaaa
     $( "#datepicker_begin" ).datepicker();
     $( "#datepicker_end" ).datepicker();
 
+    //コース選択、カレンダーの属性の設定
     $("#course_pick").attr("value",sessionStorage.getItem("course_pick")?sessionStorage.getItem("course_pick"):sessionStorage.getItem("cqchat_courseid"));
     $("#datepicker_begin").attr("value",sessionStorage.getItem("datepicker_begin")?sessionStorage.getItem("datepicker_begin"):sessionStorage.getItem("course_begin"));
     $("#datepicker_end").attr("value",sessionStorage.getItem("datepicker_end")?sessionStorage.getItem("datepicker_end"):sessionStorage.getItem("course_end"));
@@ -280,7 +285,7 @@ D3ライブラリで可視化するaaaaaaa
                 .style("background-color","white")
                 .style("text-align", "center");
 
-            // ツールキットを作成
+            // ツールキット（マウスホバー）を作成
             var mouseover = function(d) {
                 tooltip.style("opacity", 1)
             };
@@ -321,7 +326,7 @@ D3ライブラリで可視化するaaaaaaa
                 alert("データなし、頑張ってください");
             }
 
-            //draw a label
+            //ラベルの描画
             var rect_size = {top: 30, right: 30, bottom: 30, left: 30};
             var label = d3.select('#label')
                 .append('g')

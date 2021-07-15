@@ -6,15 +6,16 @@ session_start();
 
 require_once "comm_function.php";
 
-$student = $_SESSION["logined_lms_userid"];
-$group_member = $_SESSION["group_member_lmsuserid"];
-$group_id = $_SESSION["groupid"];
-$course_id = $_SESSION["cqchat_courseid"];
+$student = $_SESSION["logined_lms_userid"];//ユーザーID
+$group_member = $_SESSION["group_member_lmsuserid"];//グループメンバーのID
+$group_id = $_SESSION["groupid"];//グループのID
+$course_id = $_SESSION["cqchat_courseid"];//グループのID
 $cqchat_id = $_SESSION["cqchat_id"];
-$id_name = $_SESSION["result"] ;
-$function = $_POST['function'];
-$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;
+$id_name = $_SESSION["result"] ;//実名とBookRollのIDの配列
+$function = $_POST['function'];//readかsearch
+$course_name = $_POST['course_pick']?$_POST['course_pick']:$course_id;//スライド名
 
+//タイムスタンプに変換
 if($_POST['begin']){
     $begin = $_POST['begin'];
     $begin = strtotime($begin);

@@ -1,3 +1,4 @@
+//BookRollのデータベースへのアクセスに対するテスト
 <?php
 $dsn_bookr = 'mysql:dbname=bookroll;host=192.168.100.13;port=3306';
 $user_bookr = 'student';
